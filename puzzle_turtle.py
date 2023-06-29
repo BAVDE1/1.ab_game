@@ -8,6 +8,7 @@ player_char = "@"
 player = None
 
 lines = []
+all_blocks = []
 drawing = False
 
 wind = turtle.Screen()
@@ -23,6 +24,7 @@ def draw_ground_cube(pos_w, pos_h):
     obj.speed(0)
     obj.setposition(pos_w, pos_h)
     obj.color("white")
+    all_blocks.append(obj)
 
 
 def draw_player(pos_w, pos_h):
@@ -50,21 +52,44 @@ def draw_level():
                     draw_player((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
 
 
+#https://python-forum.io/thread-30979.html
+# Collision
+def check_for_ground():
+    return None
+
+
+# Controls
+def left():
+    print("left")
+
+
+def right():
+    print("right")
+
+
+def space():
+    print("space")
+
+
+wind.listen()
+wind.onkeypress(left, 'Left')
+wind.onkeypress(right, 'Right')
+wind.onkeypress(space, "space")
+
+
 def read_level():
     with open("levels/level_dat.txt") as file:
         global lines
         global drawing
         lines = [line.rstrip() for line in file]
+
+        # draw level
         drawing = True
         draw_level()
         drawing = False
 
-
-# Controls
-wind.listen()
-wind.onkeypress(left, 'Left')
-wind.onkeypress(right, 'Right')
-wind.onkeypress(space, "space")
+        # init check for ground
+        check_for_ground()
 
 
 # Init
