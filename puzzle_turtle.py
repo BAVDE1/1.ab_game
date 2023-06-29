@@ -1,5 +1,9 @@
 import turtle
 
+##################
+#----Defaults----#
+##################
+
 width = 30
 height = 40
 
