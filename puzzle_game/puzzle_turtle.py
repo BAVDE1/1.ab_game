@@ -48,6 +48,22 @@ switch_block.color("cyan")
 switch_block.tilt(90)
 switch_block.setposition(500, 470)
 
+tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
+
+tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
+
+tp_1 = []
+tp_2 = []
+tp_3 = []
+tp_4 = []
+tp_5 = []
+tp_6 = []
+tp_7 = []
+tp_8 = []
+tp_9 = []
+
 hover_switch = switch_block.clone()
 hover_switch.shapesize(0.5)
 hover_switch.tilt(180)
@@ -64,6 +80,7 @@ player_moving = False
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
 all_switch_pos = []
+all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
 drawing = False
 
 # Screen setup
@@ -88,6 +105,7 @@ def read_level():
         drawing = True
         wind.delay(0)
         draw_level()
+        print(all_tp)
         wind.delay(1)
         drawing = False
 
@@ -115,6 +133,14 @@ def draw_switch_cube(pos_x, pos_y):
     all_switch_pos.append([pos_x, pos_y])
 
 
+def draw_tp_base(pos_x, pos_y, index):
+    all_tp[index].append([pos_x, pos_y])
+
+
+def draw_tp_first(pos_x, pos_y, index):
+    all_tp[index].append([pos_x, pos_y])
+
+
 def draw_player(pos_w, pos_h):
     player.setposition(pos_w, pos_h)
 
@@ -140,6 +166,19 @@ def draw_level():
                     draw_switch_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
                 elif char == player_char:
                     draw_player((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
+
+                # Teleporters todo: places out of order atm
+                for base_tp_char in tp_base_char:
+                    if char == base_tp_char:
+                        draw_tp_base((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), int(char)-1)
+
+                for first_tp_char in tp_first_char:
+                    if char == first_tp_char:
+                        draw_tp_first((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), tp_first_char.index(char))
+
+                for second_tp_char in tp_second_char:
+                    if char == second_tp_char:
+                        draw_tp_first((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), tp_second_char.index(char))
 
 
 ##############################
@@ -229,7 +268,6 @@ wind.onkeypress(left, left_keys[1])
 wind.onkeypress(right, right_keys[0])
 wind.onkeypress(right, right_keys[1])
 wind.onkeypress(space, interact_key[0])
-
 
 ###############
 # ----Init----#
