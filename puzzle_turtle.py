@@ -14,6 +14,19 @@ ground_block.speed(0)
 ground_block.color("white")
 ground_block.setposition(500, 500)
 
+switch_char = "^"
+switch_block = turtle.Turtle()
+switch_block.shape("triangle")
+switch_block.penup()
+switch_block.speed(0)
+switch_block.color("cyan")
+switch_block.tilt(90)
+switch_block.setposition(500, 470)
+
+hover_switch = switch_block.clone()
+hover_switch.shapesize(0.5)
+hover_switch.tilt(180)
+
 player_char = "@"
 player = turtle.Turtle()
 player.shape("circle")
@@ -25,12 +38,14 @@ player_moving = False
 
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
+all_switch_pos = []
 drawing = False
 
 # Screen setup
 wind = turtle.Screen()
 wind.bgcolor("black")
-wind.setup(width=(width + 2) * 20, height=(height + 2) * 20)
+margin = 2
+wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
 wind.title("idk")
 wind.delay(0)
 
@@ -57,6 +72,11 @@ def draw_ground_cube(pos_x, pos_y):
     all_block_pos.append([pos_x, pos_y])
 
 
+def draw_switch_cube(pos_x, pos_y):
+    switch_block.clone().setposition(pos_x, pos_y - 5)
+    all_switch_pos.append([pos_x, pos_y])
+
+
 def draw_player(pos_w, pos_h):
     player.setposition(pos_w, pos_h)
 
@@ -72,6 +92,8 @@ def draw_level():
                 char_num += 1
                 if char == ground_char:
                     draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
+                elif char == switch_char:
+                    draw_switch_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
                 elif char == player_char:
                     draw_player((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
 
@@ -108,6 +130,23 @@ def check_for_wall(is_going_right):
     return can_move
 
 
+######################
+# ----Interaction----#
+######################
+def interact():
+    for switch_pos in all_switch_pos:
+        if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
+            print("switch")
+
+
+def check_for_switch():
+    for switch_pos in all_switch_pos:
+        if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
+            hover_switch.setposition(switch_pos[0], switch_pos[1] + 30)
+        else:
+            hover_switch.setposition(switch_block.xcor(), switch_block.ycor())
+
+
 ###################
 # ----Controls----#
 ###################
@@ -123,6 +162,7 @@ def left():
         player.setx(player.xcor() - 20)
         player_moving = False
         check_for_ground()
+        check_for_switch()
 
 
 def right():
@@ -132,10 +172,11 @@ def right():
         player.setx(player.xcor() + 20)
         player_moving = False
         check_for_ground()
+        check_for_switch()
 
 
 def space():
-    print("space")
+    interact()
 
 
 wind.listen()
@@ -143,7 +184,8 @@ wind.onkeypress(left, left_keys[0])
 wind.onkeypress(left, left_keys[1])
 wind.onkeypress(right, right_keys[0])
 wind.onkeypress(right, right_keys[1])
-wind.onkeypress(right, interact_key[0])
+wind.onkeypress(space, interact_key[0])
+
 
 ###############
 # ----Init----#
