@@ -6,6 +6,22 @@ import turtle
 width = 30
 height = 40
 
+dark_grey_char = "."
+dark_grey_block = turtle.Turtle()
+dark_grey_block.shape("square")
+dark_grey_block.penup()
+dark_grey_block.speed(0)
+dark_grey_block.color("grey5")
+dark_grey_block.setposition(540, 500)
+
+grey_char = ":"
+grey_block = turtle.Turtle()
+grey_block.shape("square")
+grey_block.penup()
+grey_block.speed(0)
+grey_block.color("grey10")
+grey_block.setposition(520, 500)
+
 ground_char = "#"
 ground_block = turtle.Turtle()
 ground_block.shape("square")
@@ -13,6 +29,15 @@ ground_block.penup()
 ground_block.speed(0)
 ground_block.color("white")
 ground_block.setposition(500, 500)
+
+fancy_ground_char = "*"
+fancy_block = turtle.Turtle()
+fancy_block.shape("square")
+fancy_block.penup()
+fancy_block.speed(0)
+fancy_block.shapesize(.5)
+fancy_block.color("black")
+fancy_block.setposition(500, 500)
 
 switch_char = "^"
 switch_block = turtle.Turtle()
@@ -54,7 +79,7 @@ wind.delay(0)
 # ----Rendering----#
 ####################
 def read_level():
-    with open("levels/level_1.txt") as file:
+    with open("puzzle_game/levels/level_1.txt") as file:
         global lines
         global drawing
         lines = [line.rstrip() for line in file]
@@ -67,13 +92,26 @@ def read_level():
         drawing = False
 
 
-def draw_ground_cube(pos_x, pos_y):
+def draw_ground_cube(pos_x, pos_y, fancy):
     ground_block.clone().setposition(pos_x, pos_y)
+    if fancy:
+        fancy_block.clone().setposition(pos_x, pos_y)
     all_block_pos.append([pos_x, pos_y])
+
+
+def draw_grey_cube(pos_x, pos_y, dark):
+    if dark:
+        dark_grey_block.clone().setposition(pos_x, pos_y)
+    else:
+        grey_block.clone().setposition(pos_x, pos_y)
 
 
 def draw_switch_cube(pos_x, pos_y):
     switch_block.clone().setposition(pos_x, pos_y - 5)
+    s_fancy = switch_block.clone()
+    s_fancy.setposition(pos_x, pos_y - 5)
+    s_fancy.shapesize(.5)
+    s_fancy.color("cyan4")
     all_switch_pos.append([pos_x, pos_y])
 
 
@@ -90,8 +128,14 @@ def draw_level():
             char_num = 0
             for char in chars:
                 char_num += 1
-                if char == ground_char:
-                    draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
+                if char == dark_grey_char:
+                    draw_grey_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), True)
+                elif char == grey_char:
+                    draw_grey_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), False)
+                elif char == ground_char:
+                    draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), False)
+                elif char == fancy_ground_char:
+                    draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), True)
                 elif char == switch_char:
                     draw_switch_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
                 elif char == player_char:
@@ -143,8 +187,8 @@ def check_for_switch():
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
             hover_switch.setposition(switch_pos[0], switch_pos[1] + 30)
-        else:
-            hover_switch.setposition(switch_block.xcor(), switch_block.ycor())
+            return None
+        hover_switch.setposition(switch_block.xcor(), switch_block.ycor())
 
 
 ###################
