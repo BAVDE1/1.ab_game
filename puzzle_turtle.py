@@ -95,7 +95,6 @@ def check_for_ground():
 def fall():
     player.sety(player.ycor() - 20)
     check_for_ground()
-    #ground_block.clone().setposition(player.xcor(), player.ycor() - 20)
 
 
 ###################
