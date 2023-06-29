@@ -20,6 +20,8 @@ player.shape("circle")
 player.penup()
 player.speed(1)
 player.color("yellow")
+player_falling = False
+player_moving = False
 
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
@@ -80,12 +82,10 @@ def draw_level():
 ##############################
 # ----Collision & Gravity----#
 ##############################
-# https://python-forum.io/thread-30979.html
-# Collision
 def check_for_ground():
     needs_to_fall = True
     for block_pos in all_block_pos:
-        if block_pos[0] == player.xcor():
+        if block_pos[0] - 19 < player.xcor() < block_pos[0] + 19:
             if block_pos[1] + 20 == player.ycor():
                 needs_to_fall = False
     if needs_to_fall:
@@ -93,19 +93,32 @@ def check_for_ground():
 
 
 def fall():
+    global player_falling
+    player_falling = True
     player.sety(player.ycor() - 20)
     check_for_ground()
+    player_falling = False
 
 
 ###################
 # ----Controls----#
 ###################
 def left():
-    print("left")
+    global player_moving
+    if not player_falling and not player_moving:
+        player_moving = True
+        player.setx(player.xcor() - 20)
+        player_moving = False
+        check_for_ground()
 
 
 def right():
-    print("right")
+    global player_moving
+    if not player_falling and not player_moving:
+        player_moving = True
+        player.setx(player.xcor() + 20)
+        player_moving = False
+        check_for_ground()
 
 
 def space():
