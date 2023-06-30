@@ -8,71 +8,65 @@ import os
 width = 30
 height = 40
 
+load_wind_delay = 0
+run_wind_delay = 4
+
 # Screen setup
 wind = turtle.Screen()
 wind.bgcolor("black")
 margin = 2
 wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
 wind.title("idk")
-wind.delay(0)
+wind.delay(load_wind_delay)
+
+# Base blocks
+base_block = turtle.Turtle()
+base_block.shape("square")
+base_block.penup()
+base_block.speed(0)
+
+base_triangle = base_block.clone()
+base_triangle.shape("triangle")
+
+base_circle = base_block.clone()
+base_circle.shape("circle")
 
 # Fancy blocks
 dark_grey_char = "."
-dark_grey_block = turtle.Turtle()
-dark_grey_block.shape("square")
-dark_grey_block.penup()
-dark_grey_block.speed(0)
+dark_grey_block = base_block.clone()
 dark_grey_block.color("grey10")
 dark_grey_block.setposition(540, 500)
 
 grey_char = ":"
-grey_block = turtle.Turtle()
-grey_block.shape("square")
-grey_block.penup()
-grey_block.speed(0)
+grey_block = base_block.clone()
 grey_block.color("grey20")
 grey_block.setposition(520, 500)
 
 fancy_ground_char = "*"
-fancy_block = turtle.Turtle()
-fancy_block.shape("square")
-fancy_block.penup()
-fancy_block.speed(0)
+fancy_block = base_block.clone()
 fancy_block.shapesize(.5)
 fancy_block.color("black")
 fancy_block.setposition(500, 500)
 
 # Ground
 ground_char = "#"
-ground_block = turtle.Turtle()
-ground_block.shape("square")
-ground_block.penup()
-ground_block.speed(0)
+ground_block = base_block.clone()
 ground_block.color("white")
 ground_block.setposition(500, 500)
 
 # Intractable
 switch_char = "^"
-switch_block = turtle.Turtle()
-switch_block.shape("triangle")
-switch_block.penup()
-switch_block.speed(0)
+switch_block = base_triangle.clone()
 switch_block.color("cyan")
 switch_block.tilt(90)
 switch_block.setposition(500, 470)
 
-tp_block_blue = turtle.Turtle()
-tp_block_blue.shape("circle")
-tp_block_blue.penup()
+tp_block_blue = base_circle.clone()
 tp_block_blue.color("cyan")
-tp_block_blue.speed(0)
 tp_block_blue.setposition(500, 450)
 
-tp_block_dull_blue = turtle.Turtle()
-tp_block_dull_blue.shape("circle")
-tp_block_dull_blue.penup()
+tp_block_dull_blue = base_circle.clone()
 tp_block_dull_blue.color("cyan4")
-tp_block_dull_blue.speed(0)
 tp_block_dull_blue.setposition(520, 450)
 
 tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -127,10 +121,10 @@ def read_level():
 
         # draw level
         drawing = True
-        wind.delay(0)
+        wind.delay(load_wind_delay)
         draw_level()
         draw_teleporters()
-        wind.delay(1)
+        wind.delay(run_wind_delay)
         drawing = False
 
 
@@ -206,21 +200,26 @@ def draw_level():
                 # Teleporters
                 for base_tp_char in tp_base_char:
                     if char == base_tp_char:
-                        draw_tp_base((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), int(char) - 1)
+                        draw_tp_base(pos_x, pos_y, int(char) - 1)
 
                 for first_tp_char in tp_first_char:
                     if char == first_tp_char:
                         # add to list, render after level has been drawn
-                        all_tp[tp_first_char.index(char)].insert(1, [(width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num)])
+                        all_tp[tp_first_char.index(char)].insert(1, [pos_x, pos_y])
 
                 for second_tp_char in tp_second_char:
                     if char == second_tp_char:
                         # add to list, render after level has been drawn
-                        all_tp[tp_second_char.index(char)].insert(2, [(width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num)])
+                        all_tp[tp_second_char.index(char)].insert(2, [pos_x, pos_y])
 
 
 def draw_teleporters():
-    return None
+    for tp_list in all_tp:
+        if tp_list:
+            if len(tp_list) == 3:
+                return None
+            else:
+                raise ValueError("Incorrect amount of values in list: ", tp_list, " (Must be exactly 3 entries)")
 
 
 ##############################
