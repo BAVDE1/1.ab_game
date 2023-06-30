@@ -294,12 +294,13 @@ def switch():
             base_pos = tp_list[0]
             first_pos = tp_list[1]
             second_pos = tp_list[2]
+            current_switch = tp_list[3]
 
-            draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], tp_list[3])
-            draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not tp_list[3])
+            draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
+            draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
             draw_tp_base(base_pos[0], base_pos[1])
 
-            tp_list[3] = not tp_list[3]
+            tp_list[3] = not current_switch
 
 
 def teleport(tp_list):
@@ -351,7 +352,7 @@ def check_for_interact_able():
             elif player.xcor() == first_pos[0] and player.ycor() == first_pos[1] and not switched:
                 interact_indicator.setposition(first_pos[0], first_pos[1] + 30)
                 return None
-            elif player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and not switched:
+            elif player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and switched:
                 interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
                 return None
 
