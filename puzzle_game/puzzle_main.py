@@ -19,7 +19,7 @@ margin = 2
 wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
 wind.title("idk")
 wind.delay(load_wind_delay)
-
+wind.register_shape("rectangle", rectangle_cors)
 drawing = False
 
 # Player values
@@ -32,6 +32,7 @@ timer_enabled = False
 # Lists
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
+all_platform_pos = []
 all_lift_pos = []
 all_switch_pos = []
 all_timer_switch_pos = []
@@ -149,17 +150,22 @@ def draw_grey_cube(pos_x, pos_y, dark):
 
 
 def draw_platform(pos_x, pos_y):
-    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
-    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
+    r = platform_block.clone()
+    r.setposition(pos_x, pos_y + 5)
+    r.shape("rectangle")
     all_block_pos.append([pos_x, pos_y])
+    all_platform_pos.append([pos_x, pos_y])
 
 
 def draw_lift(pos_x, pos_y):
-    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
-    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
-    lift_block_a.clone().setposition(pos_x + 3, pos_y + 5)
-    lift_block_a.clone().setposition(pos_x - 3, pos_y + 5)
+    r = platform_block.clone()
+    r.setposition(pos_x, pos_y + 5)
+    r.shape("rectangle")
+    lr = lift_block_a.clone()
+    lr.setposition(pos_x, pos_y + 5)
+    lr.shape("rectangle")
     all_block_pos.append([pos_x, pos_y])
+    all_platform_pos.append([pos_x, pos_y])
     all_lift_pos.append([pos_x, pos_y])
 
 
@@ -262,6 +268,15 @@ def fall():
     player_falling = False
 
 
+def check_for_platform():
+    needs_to_lift = True
+    for platform_pos in all_platform_pos:
+        if platform_pos[0] == player.xcor() and platform_pos[1] + 20 == player.ycor():
+            needs_to_lift = False
+    if needs_to_lift:
+        lift_interact()
+
+
 def check_for_wall(is_going_right):
     can_move = True
     for block_pos in all_block_pos:
@@ -277,10 +292,13 @@ def check_for_wall(is_going_right):
 # ----Interaction----#
 ######################
 def interact():
-    if not player_falling and not player_moving and not player_teleporting:
+    if not player_falling and not player_moving and not player_teleporting and not drawing:
         for lift_pos in all_lift_pos:
             if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
-                lift_interact(lift_pos[0], lift_pos[1])
+                active_lift.setposition(player.xcor(), player.ycor() - 16)
+                active_lift.shape("rectangle")
+                active_lift.speed(1)
+                lift_interact()
 
         for switch_pos in all_switch_pos:
             if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
@@ -295,11 +313,19 @@ def interact():
                 teleporter_interact(tp_list)
 
 
-def lift_interact(l_pos_x, l_pos_y):
+def lift_interact():
     global player_teleporting
     player_teleporting = True
-    print("lift")
+    threading.Thread(target=lift_thread_a).start()
+    player.setposition(player.xcor(), player.ycor() + 20)
+    check_for_platform()
+    active_lift.speed(0)
+    active_lift.setposition(500, 570)
     player_teleporting = False
+
+
+def lift_thread_a():
+    active_lift.setposition(player.xcor(), player.ycor() + 4)
 
 
 def switch_interact():
@@ -371,6 +397,12 @@ def tp_player_to(tp_to_x, tp_to_y):
 
 
 def check_for_interact_able():
+    # Lift
+    for lift_pos in all_lift_pos:
+        if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
+            interact_indicator.setposition(lift_pos[0], lift_pos[1] + 50)
+            return None
+
     # Switch
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
@@ -415,7 +447,7 @@ interact_key = ["space", "z", "m"]
 
 def left():
     global player_moving
-    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and check_for_wall(False):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(False):
         player_moving = True
         player.setx(player.xcor() - 20)
         player_moving = False
@@ -425,7 +457,7 @@ def left():
 
 def right():
     global player_moving
-    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and check_for_wall(True):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(True):
         player_moving = True
         player.setx(player.xcor() + 20)
         player_moving = False
