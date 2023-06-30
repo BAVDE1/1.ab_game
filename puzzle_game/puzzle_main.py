@@ -1,7 +1,6 @@
-import sys
-import turtle
 import time
 import threading
+from textures import *
 
 ###################
 # ----Defaults----#
@@ -22,109 +21,26 @@ wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
 wind.title("idk")
 wind.delay(load_wind_delay)
 
-# Base blocks
-base_block = turtle.Turtle()
-base_block.shape("square")
-base_block.penup()
-base_block.speed(0)
+drawing = False
 
-base_triangle = base_block.clone()
-base_triangle.shape("triangle")
-
-base_circle = base_block.clone()
-base_circle.shape("circle")
-
-# Fancy blocks
-dark_grey_char = "."
-dark_grey_block = base_block.clone()
-dark_grey_block.color("grey10")
-if str(sys.platform) == "win32":
-    dark_grey_block.color("grey2")
-dark_grey_block.setposition(540, 500)
-
-grey_char = ":"
-grey_block = base_block.clone()
-grey_block.color("grey20")
-if str(sys.platform) == "win32":
-    grey_block.color("grey5")
-grey_block.setposition(520, 500)
-
-fancy_ground_char = "*"
-fancy_block = base_block.clone()
-fancy_block.shapesize(.5)
-fancy_block.color("black")
-fancy_block.setposition(500, 500)
-
-# Ground
-ground_char = "#"
-ground_block = base_block.clone()
-ground_block.color("white")
-ground_block.setposition(500, 500)
-
-# Interact-able
-platform_char = "~"
-platform_block = base_block.clone()
-platform_block.shapesize(0.5)
-platform_block.color("white")
-
-lift_char = "="
-lift_block_a = platform_block.clone()
-lift_block_a.shapesize(0.3)
-lift_block_a.color("cyan")
-
-switch_char = "^"
-switch_block = base_triangle.clone()
-switch_block.color("cyan")
-switch_block.tilt(90)
-switch_block.setposition(500, 470)
-
-timer_switch_char = '"'
-timer_switch_block = switch_block.clone()
-timer_progress_block = base_block.clone()
-timer_progress_block.color("cyan")
-timer_progress_block.setposition(600, 600)
-
-tp_block_blue = base_circle.clone()
-tp_block_blue.color("cyan")
-tp_block_blue.setposition(500, 450)
-
-tp_block_dull_blue = base_circle.clone()
-tp_block_dull_blue.color("cyan4")
-tp_block_dull_blue.setposition(520, 450)
-
-tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
-tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
-
-tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
-
-interact_indicator = switch_block.clone()
-interact_indicator.shapesize(0.5)
-interact_indicator.tilt(180)
-
-winpad_char = "!"
-winpad_block = base_block.clone()
-winpad_block.color("lime")
-
-# Player
-player_char = "@"
-player = turtle.Turtle()
-player.shape("circle")
-player.penup()
-player.speed(1)
-player.color("yellow")
+# Player values
 player_falling = False
 player_moving = False
 player_teleporting = False
 switching_teleporters = False
 timer_enabled = False
 
-# Other
+# Lists
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
 all_lift_pos = []
 all_switch_pos = []
 all_timer_switch_pos = []
+
+# Tp lists
+tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
+tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
 tp_1 = []
 tp_2 = []
 tp_3 = []
@@ -135,8 +51,8 @@ tp_7 = []
 tp_8 = []
 tp_9 = []
 all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+
 timer_switch = []  # Only one entry allowed
-drawing = False
 
 
 ####################
