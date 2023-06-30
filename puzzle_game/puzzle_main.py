@@ -8,7 +8,7 @@ width = 30
 height = 40
 
 load_wind_delay = 0
-run_wind_delay = 4
+run_wind_delay = 1
 
 # Screen setup
 wind = turtle.Screen()
@@ -34,11 +34,15 @@ base_circle.shape("circle")
 dark_grey_char = "."
 dark_grey_block = base_block.clone()
 dark_grey_block.color("grey10")
+if str(sys.platform) == "win32":
+    dark_grey_block.color("grey2")
 dark_grey_block.setposition(540, 500)
 
 grey_char = ":"
 grey_block = base_block.clone()
 grey_block.color("grey20")
+if str(sys.platform) == "win32":
+    grey_block.color("grey5")
 grey_block.setposition(520, 500)
 
 fancy_ground_char = "*"
@@ -84,6 +88,8 @@ player = turtle.Turtle()
 player.shape("circle")
 player.penup()
 player.speed(1)
+if str(sys.platform) == "win32":
+    player.speed(2)
 player.color("yellow")
 player_falling = False
 player_moving = False
@@ -109,9 +115,7 @@ drawing = False
 # ----Rendering----#
 ####################
 def read_level():
-    level_file = "puzzle_game/levels/level_1.txt"
-    if str(sys.platform) == "linux":
-        level_file = "levels/level_1.txt"
+    level_file = "levels/level_1.txt"
 
     with open(level_file) as file:
         global lines
@@ -290,6 +294,7 @@ def interact():
 
 def switch():
     for tp_list in all_tp:
+        wind.delay(load_wind_delay)
         if tp_list:
             base_pos = tp_list[0]
             first_pos = tp_list[1]
@@ -301,6 +306,7 @@ def switch():
             draw_tp_base(base_pos[0], base_pos[1])
 
             tp_list[3] = not current_switch
+        wind.delay(run_wind_delay)
 
 
 def teleport(tp_list):
