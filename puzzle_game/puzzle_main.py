@@ -1,12 +1,11 @@
+from textures import *
+import turtle
 import time
 import threading
-from textures import *
 
 ###################
 # ----Defaults----#
 ###################
-turtle.ht()
-
 width = 30
 height = 40
 
@@ -75,127 +74,6 @@ def read_level():
         drawing = False
 
 
-def draw_ground_cube(pos_x, pos_y, fancy):
-    ground_block.clone().setposition(pos_x, pos_y)
-    if fancy:
-        fancy_block.clone().setposition(pos_x, pos_y)
-    all_block_pos.append([pos_x, pos_y])
-
-
-def draw_winpad(pos_x, pos_y):
-    winpad_block.clone().setposition(pos_x, pos_y)
-
-
-def draw_grey_cube(pos_x, pos_y, dark):
-    if dark:
-        dark_grey_block.clone().setposition(pos_x + 1, pos_y - 1)
-    else:
-        grey_block.clone().setposition(pos_x + 1, pos_y - 1)
-
-
-def draw_platform(pos_x, pos_y):
-    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
-    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
-
-    all_block_pos.append([pos_x, pos_y])
-
-
-def draw_lift(pos_x, pos_y):
-    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
-    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
-
-    lift_block_a.clone().setposition(pos_x + 3, pos_y + 5)
-    lift_block_a.clone().setposition(pos_x - 3, pos_y + 5)
-
-    all_block_pos.append([pos_x, pos_y])
-    all_lift_pos.append([pos_x, pos_y])
-
-
-def draw_switch(pos_x, pos_y):
-    switch_block.clone().setposition(pos_x, pos_y - 5)
-    s_fancy = switch_block.clone()
-    s_fancy.setposition(pos_x, pos_y - 5)
-    s_fancy.shapesize(.5)
-    s_fancy.color("cyan4")
-    all_switch_pos.append([pos_x, pos_y])
-
-
-def draw_timer_switch():
-    pos_x = timer_switch[0]
-    pos_y = timer_switch[1]
-    timer_switch_block.clone().setposition(pos_x, pos_y - 5)
-
-    ts_b = timer_switch_block.clone()
-    ts_b.setposition(pos_x, pos_y - 5)
-    ts_b.shapesize(.5)
-    ts_b.color("cyan4")
-
-    draw_timer_switch_deco_1()
-    draw_timer_switch_deco_2()
-
-
-def draw_timer_switch_deco_1():
-    pos_x = timer_switch[0]
-    pos_y = timer_switch[1]
-
-    ts_a = timer_switch_block.clone()
-    ts_a.setposition(pos_x, pos_y - 20)
-    ts_a.color("cyan", "white")
-    ts_a.shape("square")
-
-
-def draw_timer_switch_deco_2():
-    pos_x = timer_switch[0]
-    pos_y = timer_switch[1]
-
-    ts_b = timer_switch_block.clone()
-    ts_b.shapesize(.5)
-    ts_b.color("cyan4")
-    ts_b.tilt(180)
-    ts_b.setposition(pos_x, pos_y - 12)
-
-
-def draw_timer_switch_progress(percent):
-    c = timer_progress_block.clone()
-    c.shapesize(percent / 100)
-    c.setposition(timer_switch[0], timer_switch[1] - 20)
-
-
-def draw_tp_base(pos_x, pos_y):
-    tp_block_blue.clone().setposition(pos_x, pos_y)
-    f = tp_block_dull_blue.clone()
-    f.shapesize(.5)
-    f.setposition(pos_x, pos_y)
-
-
-def draw_tp_first(base_x, base_y, pos_x, pos_y, active):
-    b = tp_block_dull_blue.clone()
-    if active:
-        b = tp_block_blue.clone()
-    b.setposition(base_x, base_y)
-    b.pendown()
-    b.pensize(2)
-    b.shapesize(0.8)
-    b.setposition(pos_x, pos_y)
-    b.penup()
-
-
-def draw_tp_second(base_x, base_y, pos_x, pos_y, active):
-    b = tp_block_dull_blue.clone()
-    if active:
-        b = tp_block_blue.clone()
-    b.setposition(base_x, base_y)
-    b.pendown()
-    b.pensize(2)
-    b.shapesize(0.8)
-    b.setposition(pos_x, pos_y)
-    b.penup()
-
-
-def draw_player(pos_w, pos_h):
-    player.setposition(pos_w, pos_h)
-
-
 # Times=0: base level drawn, times=1: first tp points drawn, times=2: second tp points drawn and timers and switches drawn
 def draw_level(times):
     if lines:
@@ -252,6 +130,89 @@ def draw_level(times):
             draw_teleporters()
 
 
+def draw_ground_cube(pos_x, pos_y, fancy):
+    ground_block.clone().setposition(pos_x, pos_y)
+    if fancy:
+        fancy_block.clone().setposition(pos_x, pos_y)
+    all_block_pos.append([pos_x, pos_y])
+
+
+def draw_winpad(pos_x, pos_y):
+    winpad_block.clone().setposition(pos_x, pos_y)
+
+
+def draw_grey_cube(pos_x, pos_y, dark):
+    if dark:
+        dark_grey_block.clone().setposition(pos_x + 1, pos_y - 1)
+    else:
+        grey_block.clone().setposition(pos_x + 1, pos_y - 1)
+
+
+def draw_platform(pos_x, pos_y):
+    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
+    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
+    all_block_pos.append([pos_x, pos_y])
+
+
+def draw_lift(pos_x, pos_y):
+    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
+    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
+    lift_block_a.clone().setposition(pos_x + 3, pos_y + 5)
+    lift_block_a.clone().setposition(pos_x - 3, pos_y + 5)
+    all_block_pos.append([pos_x, pos_y])
+    all_lift_pos.append([pos_x, pos_y])
+
+
+def draw_switch(pos_x, pos_y):
+    switch_block.clone().setposition(pos_x, pos_y - 5)
+    switch_block_fancy.clone().setposition(pos_x, pos_y - 5)
+    all_switch_pos.append([pos_x, pos_y])
+
+
+def draw_timer_switch():
+    timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
+    timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 5)
+    draw_timer_switch_deco_1()
+    draw_timer_switch_deco_2()
+
+
+def draw_timer_switch_deco_1():
+    timer_switch_block_fancy_b.clone().setposition(timer_switch[0], timer_switch[1] - 20)
+
+
+def draw_timer_switch_deco_2():
+    timer_switch_block_fancy_c.clone().setposition(timer_switch[0], timer_switch[1] - 12)
+
+
+def draw_timer_switch_progress(percent):
+    c = timer_progress_block.clone()
+    c.shapesize(percent / 100)
+    c.setposition(timer_switch[0], timer_switch[1] - 20)
+
+
+def draw_tp_base(pos_x, pos_y):
+    tp_block_blue.clone().setposition(pos_x, pos_y)
+    f = tp_block_dull_blue.clone()
+    f.shapesize(.5)
+    f.setposition(pos_x, pos_y)
+
+
+def draw_tp_point(base_x, base_y, pos_x, pos_y, active):
+    b = tp_block_dull_blue.clone()
+    if active:
+        b = tp_block_blue.clone()
+    b.setposition(base_x, base_y)
+    b.pendown()
+    b.pensize(2)
+    b.shapesize(0.8)
+    b.setposition(pos_x, pos_y)
+    b.penup()
+
+
+def draw_player(pos_w, pos_h):
+    player.setposition(pos_w, pos_h)
+
+
 def draw_timer_switches():
     for ts in all_timer_switch_pos:
         if len(timer_switch) == 0:
@@ -272,8 +233,8 @@ def draw_teleporters():
                 first_pos = tp_list[1]
                 second_pos = tp_list[2]
 
-                draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
-                draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
+                draw_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
+                draw_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
                 draw_tp_base(base_pos[0], base_pos[1])
             else:
                 raise ValueError("Incorrect amount of values in list: ", tp_list,
@@ -352,8 +313,8 @@ def switch_interact():
             second_pos = tp_list[2]
             current_switch = tp_list[3]
 
-            draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
-            draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
+            draw_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
+            draw_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
             draw_tp_base(base_pos[0], base_pos[1])
 
             tp_list[3] = not current_switch
