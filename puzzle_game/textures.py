@@ -109,8 +109,5 @@ interact_indicator.tilt(180)
 
 # Winpad
 winpad_char = "!"
-winpad_block = base_block.clone()
-winpad_block.color("lime")
-
-winpad_interact_indicator = interact_indicator.clone()
-winpad_interact_indicator.color("lime")
+winpad = base_block.clone()
+winpad.color("lime")

@@ -139,7 +139,7 @@ def draw_ground_cube(pos_x, pos_y, fancy):
 
 
 def draw_winpad(pos_x, pos_y):
-    winpad_block.clone().setposition(pos_x, pos_y)
+    winpad.setposition(pos_x, pos_y)
 
 
 def draw_grey_cube(pos_x, pos_y, dark):
@@ -312,6 +312,9 @@ def interact():
             if tp_list:
                 teleporter_interact(tp_list)
 
+        if player.xcor() == winpad.xcor() and player.ycor() == winpad.ycor():
+            print("YOU WIN!")
+
 
 def lift_interact():
     global player_teleporting
@@ -433,8 +436,14 @@ def check_for_interact_able():
                 interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
                 return None
 
+    if player.xcor() == winpad.xcor() and player.ycor() == winpad.ycor():
+        interact_indicator.color("lime")
+        interact_indicator.setposition(winpad.xcor(), winpad.ycor() + 30)
+        return None
+
     # Removes indicator
     interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
+    interact_indicator.color("cyan")
 
 
 ###################
