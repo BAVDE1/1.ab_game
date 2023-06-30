@@ -1,6 +1,5 @@
 import sys
 import turtle
-import os
 
 ###################
 # ----Defaults----#
@@ -151,22 +150,35 @@ def draw_switch_cube(pos_x, pos_y):
     all_switch_pos.append([pos_x, pos_y])
 
 
-def draw_tp_base(pos_x, pos_y, index):
+def draw_tp_base(pos_x, pos_y):
     tp_block_blue.clone().setposition(pos_x, pos_y)
     f = tp_block_dull_blue.clone()
     f.shapesize(.5)
     f.setposition(pos_x, pos_y)
-    all_tp[index].insert(0, [pos_x, pos_y])
 
 
-def draw_tp_first(pos_x, pos_y, index):
-    b = tp_block_blue.clone()
-    all_tp[index].insert(1, [pos_x, pos_y])
-
-
-def draw_tp_second(pos_x, pos_y, index):
+def draw_tp_first(base_x, base_y, pos_x, pos_y, active):
     b = tp_block_dull_blue.clone()
-    all_tp[index].insert(2, [pos_x, pos_y])
+    if active:
+        b = tp_block_blue.clone()
+    b.setposition(base_x, base_y)
+    b.pendown()
+    b.pensize(2)
+    b.shapesize(0.8)
+    b.setposition(pos_x, pos_y)
+    b.penup()
+
+
+def draw_tp_second(base_x, base_y, pos_x, pos_y, active):
+    b = tp_block_dull_blue.clone()
+    if active:
+        b = tp_block_blue.clone()
+    b.setposition(base_x, base_y)
+    b.pendown()
+    b.pensize(2)
+    b.shapesize(0.8)
+    b.setposition(pos_x, pos_y)
+    b.penup()
 
 
 def draw_player(pos_w, pos_h):
@@ -200,7 +212,8 @@ def draw_level():
                 # Teleporters
                 for base_tp_char in tp_base_char:
                     if char == base_tp_char:
-                        draw_tp_base(pos_x, pos_y, int(char) - 1)
+                        # add to list, render after level has been drawn
+                        all_tp[int(char) - 1].insert(0, [pos_x, pos_y])
 
                 for first_tp_char in tp_first_char:
                     if char == first_tp_char:
@@ -216,10 +229,18 @@ def draw_level():
 def draw_teleporters():
     for tp_list in all_tp:
         if tp_list:
-            if len(tp_list) == 3:
-                return None
+            all_tp[all_tp.index(tp_list)].append(False)  # adds 'switched' value
+
+            if len(tp_list) == 4:
+                base_pos = tp_list[0]
+                first_pos = tp_list[1]
+                second_pos = tp_list[2]
+
+                draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
+                draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
+                draw_tp_base(base_pos[0], base_pos[1])
             else:
-                raise ValueError("Incorrect amount of values in list: ", tp_list, " (Must be exactly 3 entries)")
+                raise ValueError("Incorrect amount of values in list: ", tp_list, " (Must be exactly 3 entries - base, tp point 1, tp point 2, False)")
 
 
 ##############################
@@ -260,7 +281,50 @@ def check_for_wall(is_going_right):
 def interact():
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
-            print("switch")
+            switch()
+
+    for tp_list in all_tp:
+        if tp_list:
+            teleport(tp_list)
+
+
+def switch():
+    for tp_list in all_tp:
+        if tp_list:
+            base_pos = tp_list[0]
+            first_pos = tp_list[1]
+            second_pos = tp_list[2]
+
+            draw_tp_first(base_pos[0], base_pos[1], first_pos[0], first_pos[1], tp_list[3])
+            draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not tp_list[3])
+            draw_tp_base(base_pos[0], base_pos[1])
+
+            tp_list[3] = not tp_list[3]
+
+
+def teleport(tp_list):
+    base_pos = tp_list[0]
+    first_pos = tp_list[1]
+    second_pos = tp_list[2]
+    switched = tp_list[3]
+
+    if player.xcor() == base_pos[0] and player.ycor() == base_pos[1]:
+        # Base > pos
+        if not switched:
+            tp_to(first_pos[0], first_pos[1])
+        else:
+            tp_to(second_pos[0], second_pos[1])
+    elif (player.xcor() == first_pos[0] and player.ycor() == first_pos[1] and not switched) or \
+            (player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and switched):
+        # Pos > base
+        tp_to(base_pos[0], base_pos[1])
+
+
+def tp_to(tp_to_x, tp_to_y):
+    global player_moving
+    player_moving = True
+    player.setposition(tp_to_x, tp_to_y)
+    player_moving = False
 
 
 def check_for_switch():
@@ -276,7 +340,7 @@ def check_for_switch():
 ###################
 left_keys = ["Left", "a"]
 right_keys = ["Right", "d"]
-interact_key = ["space"]
+interact_key = ["space", "z", "m"]
 
 
 def left():
@@ -299,16 +363,14 @@ def right():
         check_for_switch()
 
 
-def space():
-    interact()
-
-
 wind.listen()
 wind.onkeypress(left, left_keys[0])
 wind.onkeypress(left, left_keys[1])
 wind.onkeypress(right, right_keys[0])
 wind.onkeypress(right, right_keys[1])
-wind.onkeypress(space, interact_key[0])
+wind.onkeypress(interact, interact_key[0])
+wind.onkeypress(interact, interact_key[1])
+wind.onkeypress(interact, interact_key[2])
 
 ###############
 # ----Init----#
