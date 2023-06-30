@@ -93,6 +93,8 @@ interact_indicator.shapesize(0.5)
 interact_indicator.tilt(180)
 
 winpad_char = "!"
+winpad_block = base_block.clone()
+winpad_block.color("lime")
 
 # Player
 player_char = "@"
@@ -150,6 +152,10 @@ def draw_ground_cube(pos_x, pos_y, fancy):
     if fancy:
         fancy_block.clone().setposition(pos_x, pos_y)
     all_block_pos.append([pos_x, pos_y])
+
+
+def draw_winpad(pos_x, pos_y):
+    winpad_block.clone().setposition(pos_x, pos_y)
 
 
 def draw_grey_cube(pos_x, pos_y, dark):
@@ -267,6 +273,8 @@ def draw_level():
                     draw_switch(pos_x, pos_y)
                 elif char == timer_switch_char:
                     all_timer_switch_pos.append([pos_x, pos_y])
+                elif char == winpad_char:
+                    draw_winpad(pos_x, pos_y)
                 elif char == player_char:
                     draw_player(pos_x, pos_y)
 
