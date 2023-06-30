@@ -1,4 +1,6 @@
+import sys
 import turtle
+import os
 
 ###################
 # ----Defaults----#
@@ -6,12 +8,21 @@ import turtle
 width = 30
 height = 40
 
+# Screen setup
+wind = turtle.Screen()
+wind.bgcolor("black")
+margin = 2
+wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
+wind.title("idk")
+wind.delay(0)
+
+# Fancy blocks
 dark_grey_char = "."
 dark_grey_block = turtle.Turtle()
 dark_grey_block.shape("square")
 dark_grey_block.penup()
 dark_grey_block.speed(0)
-dark_grey_block.color("grey5")
+dark_grey_block.color("grey10")
 dark_grey_block.setposition(540, 500)
 
 grey_char = ":"
@@ -19,16 +30,8 @@ grey_block = turtle.Turtle()
 grey_block.shape("square")
 grey_block.penup()
 grey_block.speed(0)
-grey_block.color("grey10")
+grey_block.color("grey20")
 grey_block.setposition(520, 500)
-
-ground_char = "#"
-ground_block = turtle.Turtle()
-ground_block.shape("square")
-ground_block.penup()
-ground_block.speed(0)
-ground_block.color("white")
-ground_block.setposition(500, 500)
 
 fancy_ground_char = "*"
 fancy_block = turtle.Turtle()
@@ -39,6 +42,16 @@ fancy_block.shapesize(.5)
 fancy_block.color("black")
 fancy_block.setposition(500, 500)
 
+# Ground
+ground_char = "#"
+ground_block = turtle.Turtle()
+ground_block.shape("square")
+ground_block.penup()
+ground_block.speed(0)
+ground_block.color("white")
+ground_block.setposition(500, 500)
+
+# Intractable
 switch_char = "^"
 switch_block = turtle.Turtle()
 switch_block.shape("triangle")
@@ -48,26 +61,31 @@ switch_block.color("cyan")
 switch_block.tilt(90)
 switch_block.setposition(500, 470)
 
+tp_block_blue = turtle.Turtle()
+tp_block_blue.shape("circle")
+tp_block_blue.penup()
+tp_block_blue.color("cyan")
+tp_block_blue.speed(0)
+tp_block_blue.setposition(500, 450)
+
+tp_block_dull_blue = turtle.Turtle()
+tp_block_dull_blue.shape("circle")
+tp_block_dull_blue.penup()
+tp_block_dull_blue.color("cyan4")
+tp_block_dull_blue.speed(0)
+tp_block_dull_blue.setposition(520, 450)
+
 tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
 
 tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
 
-tp_1 = []
-tp_2 = []
-tp_3 = []
-tp_4 = []
-tp_5 = []
-tp_6 = []
-tp_7 = []
-tp_8 = []
-tp_9 = []
+hover_interact = switch_block.clone()
+hover_interact.shapesize(0.5)
+hover_interact.tilt(180)
 
-hover_switch = switch_block.clone()
-hover_switch.shapesize(0.5)
-hover_switch.tilt(180)
-
+# Player
 player_char = "@"
 player = turtle.Turtle()
 player.shape("circle")
@@ -77,26 +95,32 @@ player.color("yellow")
 player_falling = False
 player_moving = False
 
+# Other
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
 all_switch_pos = []
+tp_1 = []
+tp_2 = []
+tp_3 = []
+tp_4 = []
+tp_5 = []
+tp_6 = []
+tp_7 = []
+tp_8 = []
+tp_9 = []
 all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
 drawing = False
-
-# Screen setup
-wind = turtle.Screen()
-wind.bgcolor("black")
-margin = 2
-wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
-wind.title("idk")
-wind.delay(0)
 
 
 ####################
 # ----Rendering----#
 ####################
 def read_level():
-    with open("puzzle_game/levels/level_1.txt") as file:
+    level_file = "puzzle_game/levels/level_1.txt"
+    if str(sys.platform) == "linux":
+        level_file = "levels/level_1.txt"
+
+    with open(level_file) as file:
         global lines
         global drawing
         lines = [line.rstrip() for line in file]
@@ -105,7 +129,7 @@ def read_level():
         drawing = True
         wind.delay(0)
         draw_level()
-        print(all_tp)
+        draw_teleporters()
         wind.delay(1)
         drawing = False
 
@@ -119,9 +143,9 @@ def draw_ground_cube(pos_x, pos_y, fancy):
 
 def draw_grey_cube(pos_x, pos_y, dark):
     if dark:
-        dark_grey_block.clone().setposition(pos_x, pos_y)
+        dark_grey_block.clone().setposition(pos_x, pos_y - 1)
     else:
-        grey_block.clone().setposition(pos_x, pos_y)
+        grey_block.clone().setposition(pos_x, pos_y - 1)
 
 
 def draw_switch_cube(pos_x, pos_y):
@@ -134,11 +158,21 @@ def draw_switch_cube(pos_x, pos_y):
 
 
 def draw_tp_base(pos_x, pos_y, index):
-    all_tp[index].append([pos_x, pos_y])
+    tp_block_blue.clone().setposition(pos_x, pos_y)
+    f = tp_block_dull_blue.clone()
+    f.shapesize(.5)
+    f.setposition(pos_x, pos_y)
+    all_tp[index].insert(0, [pos_x, pos_y])
 
 
 def draw_tp_first(pos_x, pos_y, index):
-    all_tp[index].append([pos_x, pos_y])
+    b = tp_block_blue.clone()
+    all_tp[index].insert(1, [pos_x, pos_y])
+
+
+def draw_tp_second(pos_x, pos_y, index):
+    b = tp_block_dull_blue.clone()
+    all_tp[index].insert(2, [pos_x, pos_y])
 
 
 def draw_player(pos_w, pos_h):
@@ -154,31 +188,39 @@ def draw_level():
             char_num = 0
             for char in chars:
                 char_num += 1
+                pos_x = (width / 2 * -20) + (20 * char_num)
+                pos_y = (height / 2 * 20) - (20 * line_num)
                 if char == dark_grey_char:
-                    draw_grey_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), True)
+                    draw_grey_cube(pos_x, pos_y, True)
                 elif char == grey_char:
-                    draw_grey_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), False)
+                    draw_grey_cube(pos_x, pos_y, False)
                 elif char == ground_char:
-                    draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), False)
+                    draw_ground_cube(pos_x, pos_y, False)
                 elif char == fancy_ground_char:
-                    draw_ground_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), True)
+                    draw_ground_cube(pos_x, pos_y, True)
                 elif char == switch_char:
-                    draw_switch_cube((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
+                    draw_switch_cube(pos_x, pos_y)
                 elif char == player_char:
-                    draw_player((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num))
+                    draw_player(pos_x, pos_y)
 
-                # Teleporters todo: places out of order atm
+                # Teleporters
                 for base_tp_char in tp_base_char:
                     if char == base_tp_char:
-                        draw_tp_base((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), int(char)-1)
+                        draw_tp_base((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), int(char) - 1)
 
                 for first_tp_char in tp_first_char:
                     if char == first_tp_char:
-                        draw_tp_first((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), tp_first_char.index(char))
+                        # add to list, render after level has been drawn
+                        all_tp[tp_first_char.index(char)].insert(1, [(width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num)])
 
                 for second_tp_char in tp_second_char:
                     if char == second_tp_char:
-                        draw_tp_first((width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num), tp_second_char.index(char))
+                        # add to list, render after level has been drawn
+                        all_tp[tp_second_char.index(char)].insert(2, [(width / 2 * -20) + (20 * char_num), (height / 2 * 20) - (20 * line_num)])
+
+
+def draw_teleporters():
+    return None
 
 
 ##############################
@@ -225,9 +267,9 @@ def interact():
 def check_for_switch():
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
-            hover_switch.setposition(switch_pos[0], switch_pos[1] + 30)
+            hover_interact.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
-        hover_switch.setposition(switch_block.xcor(), switch_block.ycor())
+        hover_interact.setposition(switch_block.xcor(), switch_block.ycor())
 
 
 ###################
