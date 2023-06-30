@@ -74,9 +74,9 @@ tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
 
 tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
 
-hover_interact = switch_block.clone()
-hover_interact.shapesize(0.5)
-hover_interact.tilt(180)
+interact_indicator = switch_block.clone()
+interact_indicator.shapesize(0.5)
+interact_indicator.tilt(180)
 
 # Player
 player_char = "@"
@@ -229,7 +229,7 @@ def draw_level():
 def draw_teleporters():
     for tp_list in all_tp:
         if tp_list:
-            all_tp[all_tp.index(tp_list)].append(False)  # adds 'switched' value
+            all_tp[all_tp.index(tp_list)].append(False)  # adds 'switched' value to end
 
             if len(tp_list) == 4:
                 base_pos = tp_list[0]
@@ -319,6 +319,9 @@ def teleport(tp_list):
         # Pos > base
         tp_to(base_pos[0], base_pos[1])
 
+    check_for_ground()
+    check_for_interact_able()
+
 
 def tp_to(tp_to_x, tp_to_y):
     global player_moving
@@ -327,12 +330,32 @@ def tp_to(tp_to_x, tp_to_y):
     player_moving = False
 
 
-def check_for_switch():
+def check_for_interact_able():
+    # Switch
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
-            hover_interact.setposition(switch_pos[0], switch_pos[1] + 30)
+            interact_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
-        hover_interact.setposition(switch_block.xcor(), switch_block.ycor())
+
+    # Teleporter
+    for tp_list in all_tp:
+        if tp_list:
+            base_pos = tp_list[0]
+            first_pos = tp_list[1]
+            second_pos = tp_list[2]
+            switched = tp_list[3]
+
+            if player.xcor() == base_pos[0] and player.ycor() == base_pos[1]:
+                interact_indicator.setposition(base_pos[0], base_pos[1] + 30)
+                return None
+            elif player.xcor() == first_pos[0] and player.ycor() == first_pos[1] and not switched:
+                interact_indicator.setposition(first_pos[0], first_pos[1] + 30)
+                return None
+            elif player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and not switched:
+                interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
+                return None
+
+    interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
 
 
 ###################
@@ -350,7 +373,7 @@ def left():
         player.setx(player.xcor() - 20)
         player_moving = False
         check_for_ground()
-        check_for_switch()
+        check_for_interact_able()
 
 
 def right():
@@ -360,7 +383,7 @@ def right():
         player.setx(player.xcor() + 20)
         player_moving = False
         check_for_ground()
-        check_for_switch()
+        check_for_interact_able()
 
 
 wind.listen()
