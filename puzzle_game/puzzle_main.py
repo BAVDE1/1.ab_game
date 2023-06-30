@@ -1,9 +1,13 @@
 import sys
 import turtle
+import time
+import threading
 
 ###################
 # ----Defaults----#
 ###################
+turtle.ht()
+
 width = 30
 height = 40
 
@@ -64,6 +68,9 @@ switch_block.color("cyan")
 switch_block.tilt(90)
 switch_block.setposition(500, 470)
 
+timer_switch_char = '"'
+timer_switch_block = switch_block.clone()
+
 tp_block_blue = base_circle.clone()
 tp_block_blue.color("cyan")
 tp_block_blue.setposition(500, 450)
@@ -82,22 +89,26 @@ interact_indicator = switch_block.clone()
 interact_indicator.shapesize(0.5)
 interact_indicator.tilt(180)
 
+winpad_char = "!"
+
 # Player
 player_char = "@"
 player = turtle.Turtle()
 player.shape("circle")
 player.penup()
 player.speed(1)
-if str(sys.platform) == "win32":
-    player.speed(2)
 player.color("yellow")
 player_falling = False
 player_moving = False
+player_teleporting = False
+switching_teleporters = False
+timer_enabled = False
 
 # Other
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
 all_switch_pos = []
+all_timer_switch_pos = []
 tp_1 = []
 tp_2 = []
 tp_3 = []
@@ -126,7 +137,6 @@ def read_level():
         drawing = True
         wind.delay(load_wind_delay)
         draw_level()
-        draw_teleporters()
         wind.delay(run_wind_delay)
         drawing = False
 
@@ -140,18 +150,35 @@ def draw_ground_cube(pos_x, pos_y, fancy):
 
 def draw_grey_cube(pos_x, pos_y, dark):
     if dark:
-        dark_grey_block.clone().setposition(pos_x, pos_y - 1)
+        dark_grey_block.clone().setposition(pos_x + 1, pos_y - 1)
     else:
-        grey_block.clone().setposition(pos_x, pos_y - 1)
+        grey_block.clone().setposition(pos_x + 1, pos_y - 1)
 
 
-def draw_switch_cube(pos_x, pos_y):
+def draw_switch(pos_x, pos_y):
     switch_block.clone().setposition(pos_x, pos_y - 5)
     s_fancy = switch_block.clone()
     s_fancy.setposition(pos_x, pos_y - 5)
     s_fancy.shapesize(.5)
     s_fancy.color("cyan4")
     all_switch_pos.append([pos_x, pos_y])
+
+
+def draw_timer_switch(pos_x, pos_y):
+    timer_switch_block.clone().setposition(pos_x, pos_y - 5)
+    ts_a = timer_switch_block.clone()
+    ts_a.setposition(pos_x, pos_y - 20)
+    ts_a.color("cyan", "white")
+    ts_a.shape("square")
+
+    ts_b = timer_switch_block.clone()
+    ts_b.setposition(pos_x, pos_y - 5)
+    ts_b.shapesize(.5)
+    ts_b.color("cyan4")
+
+    ts_c = ts_b.clone()
+    ts_c.tilt(180)
+    ts_c.setposition(pos_x, pos_y - 12)
 
 
 def draw_tp_base(pos_x, pos_y):
@@ -209,7 +236,9 @@ def draw_level():
                 elif char == fancy_ground_char:
                     draw_ground_cube(pos_x, pos_y, True)
                 elif char == switch_char:
-                    draw_switch_cube(pos_x, pos_y)
+                    draw_switch(pos_x, pos_y)
+                elif char == timer_switch_char:
+                    all_timer_switch_pos.append([pos_x, pos_y])
                 elif char == player_char:
                     draw_player(pos_x, pos_y)
 
@@ -229,6 +258,15 @@ def draw_level():
                         # add to list, render after level has been drawn
                         all_tp[tp_second_char.index(char)].insert(2, [pos_x, pos_y])
 
+        # To be done after base level is drawn
+        draw_timer_switches()
+        draw_teleporters()
+
+
+def draw_timer_switches():
+    for timer_switch in all_timer_switch_pos:
+        draw_timer_switch(timer_switch[0], timer_switch[1])
+
 
 def draw_teleporters():
     for tp_list in all_tp:
@@ -244,7 +282,8 @@ def draw_teleporters():
                 draw_tp_second(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
                 draw_tp_base(base_pos[0], base_pos[1])
             else:
-                raise ValueError("Incorrect amount of values in list: ", tp_list, " (Must be exactly 3 entries - base, tp point 1, tp point 2, False)")
+                raise ValueError("Incorrect amount of values in list: ", tp_list,
+                                 " (Must be exactly 3 entries - base, tp point 1, tp point 2, False)")
 
 
 ##############################
@@ -285,14 +324,20 @@ def check_for_wall(is_going_right):
 def interact():
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
-            switch()
+            switch_interact()
+
+    for timer_switch_pos in all_timer_switch_pos:
+        if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
+            threading.Thread(target=timer_switch_interact).start()
 
     for tp_list in all_tp:
         if tp_list:
-            teleport(tp_list)
+            teleporter_interact(tp_list)
 
 
-def switch():
+def switch_interact():
+    global switching_teleporters
+    switching_teleporters = True
     for tp_list in all_tp:
         wind.delay(load_wind_delay)
         if tp_list:
@@ -307,9 +352,24 @@ def switch():
 
             tp_list[3] = not current_switch
         wind.delay(run_wind_delay)
+    switching_teleporters = False
 
 
-def teleport(tp_list):
+def timer_switch_interact():
+    global timer_enabled
+    timer_enabled = True
+    time_pressed = time.time()
+    timer_sec = 4
+    timer_percent = 0
+    while time.time() - time_pressed < timer_sec:
+        time.sleep(0.25)
+        timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
+    switch_interact()
+    timer_enabled = False
+    check_for_interact_able()
+
+
+def teleporter_interact(tp_list):
     base_pos = tp_list[0]
     first_pos = tp_list[1]
     second_pos = tp_list[2]
@@ -318,23 +378,27 @@ def teleport(tp_list):
     if player.xcor() == base_pos[0] and player.ycor() == base_pos[1]:
         # Base > pos
         if not switched:
-            tp_to(first_pos[0], first_pos[1])
+            tp_player_to(first_pos[0], first_pos[1])
         else:
-            tp_to(second_pos[0], second_pos[1])
+            tp_player_to(second_pos[0], second_pos[1])
     elif (player.xcor() == first_pos[0] and player.ycor() == first_pos[1] and not switched) or \
             (player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and switched):
         # Pos > base
-        tp_to(base_pos[0], base_pos[1])
+        tp_player_to(base_pos[0], base_pos[1])
 
     check_for_ground()
     check_for_interact_able()
 
 
-def tp_to(tp_to_x, tp_to_y):
-    global player_moving
-    player_moving = True
+def tp_player_to(tp_to_x, tp_to_y):
+    global player_teleporting
+    if str(sys.platform) == "win32":
+        player.speed(2)
+    player_teleporting = True
     player.setposition(tp_to_x, tp_to_y)
-    player_moving = False
+    player_teleporting = False
+    if str(sys.platform) == "win32":
+        player.speed(1)
 
 
 def check_for_interact_able():
@@ -342,6 +406,12 @@ def check_for_interact_able():
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
             interact_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
+            return None
+
+    # Timer switch
+    for timer_switch_pos in all_timer_switch_pos:
+        if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
+            interact_indicator.setposition(timer_switch_pos[0], timer_switch_pos[1] + 30)
             return None
 
     # Teleporter
@@ -362,6 +432,7 @@ def check_for_interact_able():
                 interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
                 return None
 
+    # Removes indicator
     interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
 
 
@@ -375,7 +446,7 @@ interact_key = ["space", "z", "m"]
 
 def left():
     global player_moving
-    if not player_falling and not player_moving and check_for_wall(False):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and check_for_wall(False):
         player_moving = True
         player.setx(player.xcor() - 20)
         player_moving = False
@@ -385,7 +456,7 @@ def left():
 
 def right():
     global player_moving
-    if not player_falling and not player_moving and check_for_wall(True):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and check_for_wall(True):
         player_moving = True
         player.setx(player.xcor() + 20)
         player_moving = False
