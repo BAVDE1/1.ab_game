@@ -61,7 +61,17 @@ ground_block = base_block.clone()
 ground_block.color("white")
 ground_block.setposition(500, 500)
 
-# Intractable
+# Interact-able
+platform_char = "~"
+platform_block = base_block.clone()
+platform_block.shapesize(0.5)
+platform_block.color("white")
+
+lift_char = "="
+lift_block_a = platform_block.clone()
+lift_block_a.shapesize(0.3)
+lift_block_a.color("cyan")
+
 switch_char = "^"
 switch_block = base_triangle.clone()
 switch_block.color("cyan")
@@ -112,6 +122,7 @@ timer_enabled = False
 # Other
 lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
+all_lift_pos = []
 all_switch_pos = []
 all_timer_switch_pos = []
 tp_1 = []
@@ -142,7 +153,8 @@ def read_level():
         # draw level
         drawing = True
         wind.delay(load_wind_delay)
-        draw_level()
+        for i in range(3):
+            draw_level(i)
         wind.delay(run_wind_delay)
         drawing = False
 
@@ -163,6 +175,24 @@ def draw_grey_cube(pos_x, pos_y, dark):
         dark_grey_block.clone().setposition(pos_x + 1, pos_y - 1)
     else:
         grey_block.clone().setposition(pos_x + 1, pos_y - 1)
+
+
+def draw_platform(pos_x, pos_y):
+    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
+    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
+
+    all_block_pos.append([pos_x, pos_y])
+
+
+def draw_lift(pos_x, pos_y):
+    platform_block.clone().setposition(pos_x + 5, pos_y + 5)
+    platform_block.clone().setposition(pos_x - 5, pos_y + 5)
+
+    lift_block_a.clone().setposition(pos_x + 3, pos_y + 5)
+    lift_block_a.clone().setposition(pos_x - 3, pos_y + 5)
+
+    all_block_pos.append([pos_x, pos_y])
+    all_lift_pos.append([pos_x, pos_y])
 
 
 def draw_switch(pos_x, pos_y):
@@ -250,7 +280,8 @@ def draw_player(pos_w, pos_h):
     player.setposition(pos_w, pos_h)
 
 
-def draw_level():
+# Times=0: base level drawn, times=1: first tp points drawn, times=2: second tp points drawn and timers and switches drawn
+def draw_level(times):
     if lines:
         line_num = 0
         for line in lines:
@@ -261,42 +292,48 @@ def draw_level():
                 char_num += 1
                 pos_x = (width / 2 * -20) + (20 * char_num)
                 pos_y = (height / 2 * 20) - (20 * line_num)
-                if char == dark_grey_char:
-                    draw_grey_cube(pos_x, pos_y, True)
-                elif char == grey_char:
-                    draw_grey_cube(pos_x, pos_y, False)
-                elif char == ground_char:
-                    draw_ground_cube(pos_x, pos_y, False)
-                elif char == fancy_ground_char:
-                    draw_ground_cube(pos_x, pos_y, True)
-                elif char == switch_char:
-                    draw_switch(pos_x, pos_y)
-                elif char == timer_switch_char:
-                    all_timer_switch_pos.append([pos_x, pos_y])
-                elif char == winpad_char:
-                    draw_winpad(pos_x, pos_y)
-                elif char == player_char:
-                    draw_player(pos_x, pos_y)
+                if times == 0:
+                    if char == dark_grey_char:
+                        draw_grey_cube(pos_x, pos_y, True)
+                    elif char == grey_char:
+                        draw_grey_cube(pos_x, pos_y, False)
+                    elif char == ground_char:
+                        draw_ground_cube(pos_x, pos_y, False)
+                    elif char == fancy_ground_char:
+                        draw_ground_cube(pos_x, pos_y, True)
+                    elif char == platform_char:
+                        draw_platform(pos_x, pos_y)
+                    elif char == lift_char:
+                        draw_lift(pos_x, pos_y)
+                    elif char == switch_char:
+                        draw_switch(pos_x, pos_y)
+                    elif char == timer_switch_char:
+                        all_timer_switch_pos.append([pos_x, pos_y])
+                    elif char == winpad_char:
+                        draw_winpad(pos_x, pos_y)
+                    elif char == player_char:
+                        draw_player(pos_x, pos_y)
 
                 # Teleporters
                 for base_tp_char in tp_base_char:
-                    if char == base_tp_char:
+                    if char == base_tp_char and times == 0:
                         # add to list, render after level has been drawn
                         all_tp[int(char) - 1].insert(0, [pos_x, pos_y])
 
                 for first_tp_char in tp_first_char:
-                    if char == first_tp_char:
+                    if char == first_tp_char and times == 1:
                         # add to list, render after level has been drawn
                         all_tp[tp_first_char.index(char)].insert(1, [pos_x, pos_y])
 
                 for second_tp_char in tp_second_char:
-                    if char == second_tp_char:
+                    if char == second_tp_char and times == 2:
                         # add to list, render after level has been drawn
                         all_tp[tp_second_char.index(char)].insert(2, [pos_x, pos_y])
 
         # To be done after base level is drawn
-        draw_timer_switches()
-        draw_teleporters()
+        if times == 2:
+            draw_timer_switches()
+            draw_teleporters()
 
 
 def draw_timer_switches():
@@ -363,17 +400,29 @@ def check_for_wall(is_going_right):
 # ----Interaction----#
 ######################
 def interact():
-    for switch_pos in all_switch_pos:
-        if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
-            switch_interact()
+    if not player_falling and not player_moving and not player_teleporting:
+        for lift_pos in all_lift_pos:
+            if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
+                lift_interact(lift_pos[0], lift_pos[1])
 
-    for timer_switch_pos in all_timer_switch_pos:
-        if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
-            threading.Thread(target=timer_switch_interact).start()
+        for switch_pos in all_switch_pos:
+            if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
+                switch_interact()
 
-    for tp_list in all_tp:
-        if tp_list:
-            teleporter_interact(tp_list)
+        for timer_switch_pos in all_timer_switch_pos:
+            if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
+                threading.Thread(target=timer_switch_interact).start()
+
+        for tp_list in all_tp:
+            if tp_list:
+                teleporter_interact(tp_list)
+
+
+def lift_interact(l_pos_x, l_pos_y):
+    global player_teleporting
+    player_teleporting = True
+    print("lift")
+    player_teleporting = False
 
 
 def switch_interact():
