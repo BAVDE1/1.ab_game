@@ -70,6 +70,9 @@ switch_block.setposition(500, 470)
 
 timer_switch_char = '"'
 timer_switch_block = switch_block.clone()
+timer_progress_block = base_block.clone()
+timer_progress_block.color("cyan")
+timer_progress_block.setposition(600, 600)
 
 tp_block_blue = base_circle.clone()
 tp_block_blue.color("cyan")
@@ -119,6 +122,7 @@ tp_7 = []
 tp_8 = []
 tp_9 = []
 all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+timer_switch = []  # Only one entry allowed
 drawing = False
 
 
@@ -164,21 +168,45 @@ def draw_switch(pos_x, pos_y):
     all_switch_pos.append([pos_x, pos_y])
 
 
-def draw_timer_switch(pos_x, pos_y):
+def draw_timer_switch():
+    pos_x = timer_switch[0]
+    pos_y = timer_switch[1]
     timer_switch_block.clone().setposition(pos_x, pos_y - 5)
-    ts_a = timer_switch_block.clone()
-    ts_a.setposition(pos_x, pos_y - 20)
-    ts_a.color("cyan", "white")
-    ts_a.shape("square")
 
     ts_b = timer_switch_block.clone()
     ts_b.setposition(pos_x, pos_y - 5)
     ts_b.shapesize(.5)
     ts_b.color("cyan4")
 
-    ts_c = ts_b.clone()
-    ts_c.tilt(180)
-    ts_c.setposition(pos_x, pos_y - 12)
+    draw_timer_switch_deco_1()
+    draw_timer_switch_deco_2()
+
+
+def draw_timer_switch_deco_1():
+    pos_x = timer_switch[0]
+    pos_y = timer_switch[1]
+
+    ts_a = timer_switch_block.clone()
+    ts_a.setposition(pos_x, pos_y - 20)
+    ts_a.color("cyan", "white")
+    ts_a.shape("square")
+
+
+def draw_timer_switch_deco_2():
+    pos_x = timer_switch[0]
+    pos_y = timer_switch[1]
+
+    ts_b = timer_switch_block.clone()
+    ts_b.shapesize(.5)
+    ts_b.color("cyan4")
+    ts_b.tilt(180)
+    ts_b.setposition(pos_x, pos_y - 12)
+
+
+def draw_timer_switch_progress(percent):
+    c = timer_progress_block.clone()
+    c.shapesize(percent / 100)
+    c.setposition(timer_switch[0], timer_switch[1] - 20)
 
 
 def draw_tp_base(pos_x, pos_y):
@@ -264,8 +292,13 @@ def draw_level():
 
 
 def draw_timer_switches():
-    for timer_switch in all_timer_switch_pos:
-        draw_timer_switch(timer_switch[0], timer_switch[1])
+    for ts in all_timer_switch_pos:
+        if len(timer_switch) == 0:
+            timer_switch.append(ts[0])
+            timer_switch.append(ts[1])
+            draw_timer_switch()
+        else:
+            raise ValueError("Only one timer switch is allowed!")
 
 
 def draw_teleporters():
@@ -359,13 +392,15 @@ def timer_switch_interact():
     global timer_enabled
     timer_enabled = True
     time_pressed = time.time()
-    timer_sec = 4
-    timer_percent = 0
+    timer_sec = 8
     while time.time() - time_pressed < timer_sec:
-        time.sleep(0.25)
+        time.sleep(0.2)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
+        draw_timer_switch_progress(timer_percent)
     switch_interact()
     timer_enabled = False
+    draw_timer_switch_deco_1()
+    draw_timer_switch_deco_2()
     check_for_interact_able()
 
 
