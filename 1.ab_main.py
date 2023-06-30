@@ -17,7 +17,7 @@ wind = turtle.Screen()
 wind.bgcolor("black")
 margin = 2
 wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
-wind.title("idk")
+wind.title("1.ab")
 wind.delay(load_wind_delay)
 wind.register_shape("rectangle", rectangle_cors)
 drawing = False
