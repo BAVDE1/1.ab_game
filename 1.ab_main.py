@@ -59,7 +59,7 @@ timer_switch = []  # Only one entry allowed
 # ----Rendering----#
 ####################
 def read_level():
-    level_file = "levels/level_1.txt"
+    level_file = "levels/main_menu.txt"
 
     with open(level_file) as file:
         global lines
@@ -319,12 +319,15 @@ def interact():
 def lift_interact():
     global player_teleporting
     player_teleporting = True
+
     threading.Thread(target=lift_thread_a).start()
     player.setposition(player.xcor(), player.ycor() + 20)
     check_for_platform()
     active_lift.speed(0)
     active_lift.setposition(500, 570)
+
     player_teleporting = False
+    check_for_interact_able()
 
 
 def lift_thread_a():
@@ -483,10 +486,11 @@ wind.onkeypress(interact, interact_key[0])
 wind.onkeypress(interact, interact_key[1])
 wind.onkeypress(interact, interact_key[2])
 
+
 ###############
 # ----Init----#
 ###############
-if __name__ == '__main__':
+def initialise():
     print("Initialising")
 
     # draw level
@@ -498,5 +502,10 @@ if __name__ == '__main__':
     check_for_ground()
 
     print("Initialisation complete")
+
+
+if __name__ == '__main__':
+    initialise()
+
 
 wind.mainloop()

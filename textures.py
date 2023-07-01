@@ -4,19 +4,25 @@ import turtle
 # Custom shape
 rectangle_cors = ((-20, 10), (20, 10), (20, -10), (-20, -10))
 
+turtle.ht()
+turtle.write("loading...", font=("Lora", 10, "bold"))
+
 # Player
 player_char = "@"
 player = turtle.Turtle()
-player.shape("circle")
 player.penup()
+player.speed(0)
+player.setposition(500, 500)
 player.speed(1)
+player.shape("circle")
 player.color("yellow")
 
 # Base blocks
 base_block = turtle.Turtle()
-base_block.shape("square")
 base_block.penup()
 base_block.speed(0)
+base_block.setposition(500, 500)
+base_block.shape("square")
 
 base_triangle = base_block.clone()
 base_triangle.shape("triangle")
