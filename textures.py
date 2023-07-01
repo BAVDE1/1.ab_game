@@ -145,6 +145,9 @@ interact_indicator_base = switch_block.clone()
 interact_indicator_base.shapesize(0.5)
 interact_indicator_base.tilt(180)
 
+green_interaction_indicator_base = interact_indicator_base.clone()
+green_interaction_indicator_base.color("lawn green")
+
 # Winpad
 winpad_char = "!"
 winpad = base_block.clone()

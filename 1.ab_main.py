@@ -19,16 +19,19 @@ wind = turtle.Screen()
 player = turtle.Turtle()
 active_lift = platform_block.clone()
 interact_indicator = interact_indicator_base.clone()
+green_interaction_indicator = green_interaction_indicator_base.clone()
 
 
 def reset_textures():
     global player
     global active_lift
     global interact_indicator
+    global green_interaction_indicator
 
     player = player_base.clone()
     active_lift = platform_block.clone()
     interact_indicator = interact_indicator_base.clone()
+    green_interaction_indicator = green_interaction_indicator_base.clone()
 
 
 # Screen setup
@@ -180,9 +183,6 @@ def draw_level(times):
 def draw_player(pos_x, pos_y):
     reset_textures()
     player.setposition(pos_x, pos_y)
-
-
-
 
 
 def draw_teleporters():
@@ -376,19 +376,19 @@ def check_for_interact_able():
             interact_indicator.setposition(lift_pos[0], lift_pos[1] + 50)
             return None
 
-    # Switch
+        # Switch
     for switch_pos in all_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
             interact_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
 
-    # Timer switch
+        # Timer switch
     for timer_switch_pos in all_timer_switch_pos:
         if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
             interact_indicator.setposition(timer_switch_pos[0], timer_switch_pos[1] + 30)
             return None
 
-    # Teleporter
+        # Teleporter
     for tp_list in all_tp:
         if tp_list:
             base_pos = tp_list[0]
@@ -409,22 +409,18 @@ def check_for_interact_able():
     # Winpad
     for winpad_p in winpad_pos:
         if player.xcor() == winpad_p[0] and player.ycor() == winpad_p[1]:
-            interact_indicator.color("lawn green")
-            interact_indicator.setposition(winpad_p[0], winpad_p[1] + 40)
-            interact_indicator.color("lawn green")
+            green_interaction_indicator.setposition(winpad_p[0], winpad_p[1] + 40)
             return None
 
     # Level select
     for level_sel_pos in all_level_sel_pos:
         if player.xcor() == level_sel_pos[0] and player.ycor() == level_sel_pos[1]:
-            interact_indicator.color("lawn green")
-            interact_indicator.setposition(level_sel_pos[0], level_sel_pos[1] + 40)
-            interact_indicator.color("lawn green")
+            green_interaction_indicator.setposition(level_sel_pos[0], level_sel_pos[1] + 40)
             return None
 
     # Removes indicator
     interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
-    interact_indicator.color("cyan")
+    green_interaction_indicator.setposition(switch_block.xcor(), switch_block.ycor())
 
 
 ###################
@@ -438,22 +434,26 @@ escape_key = ["Escape", "Delete"]
 
 def left():
     global player_moving
-    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(False):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(
+            False):
         player_moving = True
         player.setx(player.xcor() - 20)
-        player_moving = False
         check_for_ground()
         check_for_interact_able()
+        # check_for_interact_able()  # Check twice cause turtle is slow
+        player_moving = False
 
 
 def right():
     global player_moving
-    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(True):
+    if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(
+            True):
         player_moving = True
         player.setx(player.xcor() + 20)
-        player_moving = False
         check_for_ground()
         check_for_interact_able()
+        # check_for_interact_able()  # Check twice cause turtle is slow
+        player_moving = False
 
 
 def escape():
@@ -554,6 +554,5 @@ if __name__ == '__main__':
     print("Initialising")
     read_save_file()
     load_level("lobby")
-
 
 wind.mainloop()

@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="added draw handler file">
-      <change afterPath="$PROJECT_DIR$/levels/key.txt" afterDir="false" />
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="added key / read me file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/1.ab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/1.ab_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/levels/1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/levels/1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/levels/lobby.txt" beforeDir="false" afterPath="$PROJECT_DIR$/levels/lobby.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/textures.py" beforeDir="false" afterPath="$PROJECT_DIR$/textures.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -161,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1688198998443</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="added key / read me file">
+      <option name="closed" value="true" />
+      <created>1688202819781</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1688202819781</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -175,6 +180,7 @@
     <MESSAGE value="made winpads and level selects interact-able" />
     <MESSAGE value="added working file save system" />
     <MESSAGE value="added draw handler file" />
-    <option name="LAST_COMMIT_MESSAGE" value="added draw handler file" />
+    <MESSAGE value="added key / read me file" />
+    <option name="LAST_COMMIT_MESSAGE" value="added key / read me file" />
   </component>
 </project>
