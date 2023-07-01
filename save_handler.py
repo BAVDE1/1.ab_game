@@ -5,7 +5,7 @@ sv_lines = []
 amount_of_levels = 6
 
 
-def read_sv():
+def read_save_file():
     global sv_lines
 
     with open(save_file) as sv:
