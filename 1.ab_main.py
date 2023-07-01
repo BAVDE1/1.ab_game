@@ -14,7 +14,7 @@ run_wind_delay = 1
 
 wind = turtle.Screen()
 
-# One time textures
+# One time textures (must be in main)
 player = turtle.Turtle()
 active_lift = platform_block.clone()
 interact_indicator = interact_indicator_base.clone()
@@ -59,6 +59,8 @@ all_platform_pos = []
 all_lift_pos = []
 all_switch_pos = []
 all_timer_switch_pos = []
+all_level_sel_pos = []
+winpad_pos = []
 
 # Tp lists
 tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -120,20 +122,33 @@ def draw_level(times):
                         draw_grey_cube(pos_x, pos_y, False)
                     elif char == ground_char:
                         draw_ground_cube(pos_x, pos_y, False)
+                        all_block_pos.append([pos_x, pos_y])
                     elif char == fancy_ground_char:
                         draw_ground_cube(pos_x, pos_y, True)
+                        all_block_pos.append([pos_x, pos_y])
                     elif char == level_sel_char:
                         draw_green_door(pos_x, pos_y)
+                        all_level_sel_pos.append([pos_x, pos_y])
                     elif char == platform_char:
                         draw_platform(pos_x, pos_y)
+                        all_block_pos.append([pos_x, pos_y])
+                        all_platform_pos.append([pos_x, pos_y])
                     elif char == lift_char:
                         draw_lift(pos_x, pos_y)
+                        all_block_pos.append([pos_x, pos_y])
+                        all_platform_pos.append([pos_x, pos_y])
+                        all_lift_pos.append([pos_x, pos_y])
                     elif char == switch_char:
                         draw_switch(pos_x, pos_y)
+                        all_switch_pos.append([pos_x, pos_y])
                     elif char == timer_switch_char:
                         all_timer_switch_pos.append([pos_x, pos_y])
                     elif char == winpad_char:
                         draw_green_door(pos_x, pos_y)
+                        if not len(winpad_pos) > 2:
+                            winpad_pos.append([pos_x, pos_y])
+                        else:
+                            raise ValueError("Too many winpads in level")
                     elif char == player_char:
                         draw_player(pos_x, pos_y)
 
@@ -165,7 +180,6 @@ def draw_ground_cube(pos_x, pos_y, fancy):
     ground_block.clone().setposition(pos_x, pos_y)
     if fancy:
         fancy_block.clone().setposition(pos_x, pos_y)
-    all_block_pos.append([pos_x, pos_y])
 
 
 def draw_grey_cube(pos_x, pos_y, dark):
@@ -190,29 +204,23 @@ def draw_grey_door(pos_x, pos_y):
 
 
 def draw_platform(pos_x, pos_y):
-    r = platform_block.clone()
+    r = platform_block.clone()  # Must be done in main
     r.setposition(pos_x, pos_y + 5)
     r.shape("rectangle")
-    all_block_pos.append([pos_x, pos_y])
-    all_platform_pos.append([pos_x, pos_y])
 
 
 def draw_lift(pos_x, pos_y):
-    r = platform_block.clone()
+    r = platform_block.clone()  # Must be done in main
     r.setposition(pos_x, pos_y + 5)
     r.shape("rectangle")
     lr = lift_block_a.clone()
     lr.setposition(pos_x, pos_y + 5)
     lr.shape("rectangle")
-    all_block_pos.append([pos_x, pos_y])
-    all_platform_pos.append([pos_x, pos_y])
-    all_lift_pos.append([pos_x, pos_y])
 
 
 def draw_switch(pos_x, pos_y):
     switch_block.clone().setposition(pos_x, pos_y - 5)
     switch_block_fancy.clone().setposition(pos_x, pos_y - 7)
-    all_switch_pos.append([pos_x, pos_y])
 
 
 def draw_timer_switch():
@@ -231,20 +239,20 @@ def draw_timer_switch_deco_2():
 
 
 def draw_timer_switch_progress(percent):
-    c = timer_progress_block.clone()
+    c = timer_progress_block.clone()  # Must be done in main
     c.shapesize(percent / 100)
     c.setposition(timer_switch[0], timer_switch[1] - 20)
 
 
 def draw_tp_base(pos_x, pos_y):
-    tp_block_blue.clone().setposition(pos_x, pos_y)
+    tp_block_blue.clone().setposition(pos_x, pos_y)  # Must be done in main
     f = tp_block_dull_blue.clone()
     f.shapesize(.5)
     f.setposition(pos_x, pos_y)
 
 
 def draw_tp_point(base_x, base_y, pos_x, pos_y, active):
-    b = tp_block_dull_blue.clone()
+    b = tp_block_dull_blue.clone()  # Must be done in main
     if active:
         b = tp_block_blue.clone()
     b.setposition(base_x, base_y)
@@ -302,13 +310,11 @@ def check_for_ground():
 
 
 def fall():
-    print(player.pos())
     global player_falling
     player_falling = True
     player.sety(player.ycor() - 20)
     check_for_ground()
     player_falling = False
-    print(player.pos())
 
 
 def check_for_platform():
@@ -336,6 +342,7 @@ def check_for_wall(is_going_right):
 ######################
 def interact():
     if not player_falling and not player_moving and not player_teleporting and not drawing:
+        # Lift
         for lift_pos in all_lift_pos:
             if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
                 active_lift.setposition(player.xcor(), player.ycor() - 16)
@@ -343,20 +350,30 @@ def interact():
                 active_lift.speed(1)
                 lift_interact()
 
+        # Switch
         for switch_pos in all_switch_pos:
             if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
                 switch_interact()
 
+        # Timer switch
         for timer_switch_pos in all_timer_switch_pos:
             if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
                 threading.Thread(target=timer_switch_interact).start()
 
+        # teleporter
         for tp_list in all_tp:
             if tp_list:
                 teleporter_interact(tp_list)
 
-        if player.xcor() == winpad.xcor() and player.ycor() == winpad.ycor():
-            print("YOU WIN!")
+        # Winpad
+        for winpad_p in winpad_pos:
+            if player.xcor() == winpad_p[0] and player.ycor() == winpad_p[1]:
+                print("YOU WIN!")
+
+        # Level select
+        for level_sel_pos in all_level_sel_pos:
+            if player.xcor() == level_sel_pos[0] and player.ycor() == level_sel_pos[1]:
+                print("select level")
 
 
 def lift_interact():
@@ -482,10 +499,21 @@ def check_for_interact_able():
                 interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
                 return None
 
-    if player.xcor() == winpad.xcor() and player.ycor() == winpad.ycor():
-        interact_indicator.color("lime")
-        interact_indicator.setposition(winpad.xcor(), winpad.ycor() + 30)
-        return None
+    # Winpad
+    for winpad_p in winpad_pos:
+        if player.xcor() == winpad_p[0] and player.ycor() == winpad_p[1]:
+            interact_indicator.color("lawn green")
+            interact_indicator.setposition(winpad_p[0], winpad_p[1] + 40)
+            interact_indicator.color("lawn green")
+            return None
+
+    # Level select
+    for level_sel_pos in all_level_sel_pos:
+        if player.xcor() == level_sel_pos[0] and player.ycor() == level_sel_pos[1]:
+            interact_indicator.color("lawn green")
+            interact_indicator.setposition(level_sel_pos[0], level_sel_pos[1] + 40)
+            interact_indicator.color("lawn green")
+            return None
 
     # Removes indicator
     interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
@@ -522,11 +550,13 @@ def right():
 
 
 def escape():
-    if not current_file == "main_menu" and not drawing and not player_falling and not player_moving and not player_teleporting and not switching_teleporters:
+    if not current_file == "lobby" and not drawing and not player_falling and not player_moving and not player_teleporting and not switching_teleporters:
         unload_level()
         print("Unloaded level")
         screen_setup()
-        load_level("main_menu")
+        load_level("lobby")
+    elif current_file == "lobby":
+        wind.bye()
 
 
 def setup_listeners():
@@ -574,12 +604,16 @@ def unload_level():
     global all_lift_pos
     global all_switch_pos
     global all_timer_switch_pos
+    global all_level_sel_pos
+    global winpad_pos
     lines = []
     all_block_pos = []  # [0]=xcor, [1]=ycor
     all_platform_pos = []
     all_lift_pos = []
     all_switch_pos = []
     all_timer_switch_pos = []
+    all_level_sel_pos = []
+    winpad_pos = []
 
     global tp_1
     global tp_2
@@ -611,7 +645,7 @@ def unload_level():
 
 
 if __name__ == '__main__':
-    load_level("1")
+    load_level("lobby")
 
 
 wind.mainloop()
