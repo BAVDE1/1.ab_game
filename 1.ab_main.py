@@ -1,4 +1,5 @@
 from textures import *
+from save_handler import *
 import turtle
 import time
 import threading
@@ -577,7 +578,6 @@ def setup_listeners():
 ###############
 def load_level(level_to_load):
     global current_file
-    print("Initialising")
 
     setup_listeners()
 
@@ -645,6 +645,8 @@ def unload_level():
 
 
 if __name__ == '__main__':
+    print("Initialising")
+    read_sv()
     load_level("lobby")
 
 
