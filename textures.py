@@ -91,7 +91,7 @@ grey_door_block_c = green_door_block_c.clone()
 grey_door_block_c.color("grey")
 
 # Other interact-able
-platform_char = "~"
+platform_char = "-"
 platform_block = base_block.clone()
 platform_block.tilt(90)
 platform_block.shapesize(0.5)
@@ -112,6 +112,7 @@ switch_block_fancy = switch_block.clone()
 switch_block_fancy.shapesize(.5)
 switch_block_fancy.color("cyan4")
 
+# Timer switch
 timer_switch_char = '"'
 timer_switch_block = switch_block.clone()
 timer_progress_block = base_block.clone()
@@ -131,6 +132,7 @@ timer_switch_block_fancy_c.shapesize(.5)
 timer_switch_block_fancy_c.color("cyan4")
 timer_switch_block_fancy_c.tilt(180)
 
+# Teleporter
 tp_block_blue = base_circle.clone()
 tp_block_blue.setposition(500, 450)
 tp_block_blue.color("cyan")

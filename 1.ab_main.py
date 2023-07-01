@@ -104,7 +104,7 @@ def read_level(level_to_load):
         print("Read level complete")
 
 
-# Times=0: base level drawn, times=1: first tp points drawn, times=2: second tp points drawn and timers and switches drawn
+# Times=0: base level drawn and base tp points saved, times=1: first tp points saved, times=2: second tp points saved, teleporters drawn and timers drawn
 def draw_level(times):
     if lines:
         line_num = 0
