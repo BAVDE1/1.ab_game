@@ -58,8 +58,9 @@ timer_switch = []  # Only one entry allowed
 ####################
 # ----Rendering----#
 ####################
-def read_level():
-    level_file = "levels/main_menu.txt"
+def read_level(level_to_load):
+    print("Drawing Level")
+    level_file = "levels/" + level_to_load + ".txt"
 
     with open(level_file) as file:
         global lines
@@ -73,6 +74,8 @@ def read_level():
             draw_level(i)
         wind.delay(run_wind_delay)
         drawing = False
+
+        print("Read level complete")
 
 
 # Times=0: base level drawn, times=1: first tp points drawn, times=2: second tp points drawn and timers and switches drawn
@@ -129,6 +132,8 @@ def draw_level(times):
         if times == 2:
             draw_timer_switches()
             draw_teleporters()
+
+            print("Draw level complete")
 
 
 def draw_ground_cube(pos_x, pos_y, fancy):
@@ -490,12 +495,12 @@ wind.onkeypress(interact, interact_key[2])
 ###############
 # ----Init----#
 ###############
-def initialise():
+def initialise(level_to_load):
     print("Initialising")
 
     # draw level
-    print("Drawing level")
-    read_level()
+    print("Reading level")
+    read_level(level_to_load)
 
     # init check for ground
     print("Checking for ground")
@@ -505,7 +510,7 @@ def initialise():
 
 
 if __name__ == '__main__':
-    initialise()
+    initialise("main_menu")
 
 
 wind.mainloop()
