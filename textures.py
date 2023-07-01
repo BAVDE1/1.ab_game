@@ -4,18 +4,19 @@ import turtle
 # Custom shape
 rectangle_cors = ((-20, 10), (20, 10), (20, -10), (-20, -10))
 
+# Loading
 turtle.ht()
 turtle.write("loading...", font=("Lora", 10, "bold"))
 
 # Player
 player_char = "@"
-player = turtle.Turtle()
-player.penup()
-player.speed(0)
-player.setposition(500, 500)
-player.speed(1)
-player.shape("circle")
-player.color("yellow")
+player_base = turtle.Turtle()
+player_base.penup()
+player_base.speed(0)
+player_base.setposition(500, 500)
+player_base.speed(1)
+player_base.shape("circle")
+player_base.color("yellow")
 
 # Base blocks
 base_block = turtle.Turtle()
@@ -69,8 +70,6 @@ lift_block_a = platform_block.clone()
 lift_block_a.shapesize(0.3)
 lift_block_a.color("cyan")
 
-active_lift = platform_block.clone()
-
 switch_char = "^"
 switch_block = base_triangle.clone()
 switch_block.setposition(500, 470)
@@ -109,9 +108,9 @@ tp_block_dull_blue = base_circle.clone()
 tp_block_dull_blue.setposition(520, 450)
 tp_block_dull_blue.color("cyan4")
 
-interact_indicator = switch_block.clone()
-interact_indicator.shapesize(0.5)
-interact_indicator.tilt(180)
+interact_indicator_base = switch_block.clone()
+interact_indicator_base.shapesize(0.5)
+interact_indicator_base.tilt(180)
 
 # Winpad
 winpad_char = "!"

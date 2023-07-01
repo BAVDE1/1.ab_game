@@ -12,14 +12,37 @@ height = 40
 load_wind_delay = 0
 run_wind_delay = 1
 
-# Screen setup
 wind = turtle.Screen()
-wind.bgcolor("black")
-margin = 2
-wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
-wind.title("1.ab")
-wind.delay(load_wind_delay)
-wind.register_shape("rectangle", rectangle_cors)
+
+# One time textures
+player = turtle.Turtle()
+active_lift = platform_block.clone()
+interact_indicator = interact_indicator_base.clone()
+
+
+def reset_textures():
+    global player
+    global active_lift
+    global interact_indicator
+
+    player = player_base.clone()
+    active_lift = platform_block.clone()
+    interact_indicator = interact_indicator_base.clone()
+
+
+# Screen setup
+def screen_setup():
+    global wind
+    wind.bgcolor("black")
+    margin = 2
+    wind.setup(width=(width + margin) * 20, height=(height + margin) * 20)
+    wind.title("1.ab")
+    wind.delay(load_wind_delay)
+    wind.register_shape("rectangle", rectangle_cors)
+
+
+screen_setup()
+current_file = ""
 drawing = False
 
 # Player values
@@ -220,8 +243,9 @@ def draw_tp_point(base_x, base_y, pos_x, pos_y, active):
     b.penup()
 
 
-def draw_player(pos_w, pos_h):
-    player.setposition(pos_w, pos_h)
+def draw_player(pos_x, pos_y):
+    reset_textures()
+    player.setposition(pos_x, pos_y)
 
 
 def draw_timer_switches():
@@ -266,11 +290,13 @@ def check_for_ground():
 
 
 def fall():
+    print(player.pos())
     global player_falling
     player_falling = True
     player.sety(player.ycor() - 20)
     check_for_ground()
     player_falling = False
+    print(player.pos())
 
 
 def check_for_platform():
@@ -306,7 +332,7 @@ def interact():
                 lift_interact()
 
         for switch_pos in all_switch_pos:
-            if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
+            if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
                 switch_interact()
 
         for timer_switch_pos in all_timer_switch_pos:
@@ -342,8 +368,8 @@ def lift_thread_a():
 def switch_interact():
     global switching_teleporters
     switching_teleporters = True
+    wind.delay(load_wind_delay)
     for tp_list in all_tp:
-        wind.delay(load_wind_delay)
         if tp_list:
             base_pos = tp_list[0]
             first_pos = tp_list[1]
@@ -355,7 +381,7 @@ def switch_interact():
             draw_tp_base(base_pos[0], base_pos[1])
 
             tp_list[3] = not current_switch
-        wind.delay(run_wind_delay)
+    wind.delay(run_wind_delay)
     switching_teleporters = False
 
 
@@ -460,6 +486,7 @@ def check_for_interact_able():
 left_keys = ["Left", "a"]
 right_keys = ["Right", "d"]
 interact_key = ["space", "z", "m"]
+escape_key = ["Escape", "Delete"]
 
 
 def left():
@@ -482,25 +509,40 @@ def right():
         check_for_interact_able()
 
 
-wind.listen()
-wind.onkeypress(left, left_keys[0])
-wind.onkeypress(left, left_keys[1])
-wind.onkeypress(right, right_keys[0])
-wind.onkeypress(right, right_keys[1])
-wind.onkeypress(interact, interact_key[0])
-wind.onkeypress(interact, interact_key[1])
-wind.onkeypress(interact, interact_key[2])
+def escape():
+    if not current_file == "main_menu":
+        unload_level()
+        print("Unloaded level")
+        screen_setup()
+        load_level("main_menu")
+
+
+def setup_listeners():
+    wind.listen()
+    wind.onkeypress(left, left_keys[0])
+    wind.onkeypress(left, left_keys[1])
+    wind.onkeypress(right, right_keys[0])
+    wind.onkeypress(right, right_keys[1])
+    wind.onkeypress(interact, interact_key[0])
+    wind.onkeypress(interact, interact_key[1])
+    wind.onkeypress(interact, interact_key[2])
+    wind.onkeypress(escape, escape_key[0])
+    wind.onkeypress(escape, escape_key[1])
 
 
 ###############
 # ----Init----#
 ###############
-def initialise(level_to_load):
+def load_level(level_to_load):
+    global current_file
     print("Initialising")
+
+    setup_listeners()
 
     # draw level
     print("Reading level")
     read_level(level_to_load)
+    current_file = level_to_load
 
     # init check for ground
     print("Checking for ground")
@@ -509,8 +551,55 @@ def initialise(level_to_load):
     print("Initialisation complete")
 
 
+def unload_level():
+    print("Unloading level")
+    wind.delay(load_wind_delay)
+    wind.clearscreen()
+
+    global lines
+    global all_block_pos
+    global all_platform_pos
+    global all_lift_pos
+    global all_switch_pos
+    global all_timer_switch_pos
+    lines = []
+    all_block_pos = []  # [0]=xcor, [1]=ycor
+    all_platform_pos = []
+    all_lift_pos = []
+    all_switch_pos = []
+    all_timer_switch_pos = []
+
+    global tp_1
+    global tp_2
+    global tp_3
+    global tp_4
+    global tp_5
+    global tp_6
+    global tp_7
+    global tp_8
+    global tp_9
+    tp_1 = []
+    tp_2 = []
+    tp_3 = []
+    tp_4 = []
+    tp_5 = []
+    tp_6 = []
+    tp_7 = []
+    tp_8 = []
+    tp_9 = []
+
+    global all_tp
+    all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+
+    global current_file
+    current_file = ""
+
+    global timer_switch
+    timer_switch = []
+
+
 if __name__ == '__main__':
-    initialise("main_menu")
+    load_level("1")
 
 
 wind.mainloop()
