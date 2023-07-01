@@ -122,6 +122,8 @@ def draw_level(times):
                         draw_ground_cube(pos_x, pos_y, False)
                     elif char == fancy_ground_char:
                         draw_ground_cube(pos_x, pos_y, True)
+                    elif char == level_sel_char:
+                        draw_green_door(pos_x, pos_y)
                     elif char == platform_char:
                         draw_platform(pos_x, pos_y)
                     elif char == lift_char:
@@ -131,7 +133,7 @@ def draw_level(times):
                     elif char == timer_switch_char:
                         all_timer_switch_pos.append([pos_x, pos_y])
                     elif char == winpad_char:
-                        draw_winpad(pos_x, pos_y)
+                        draw_green_door(pos_x, pos_y)
                     elif char == player_char:
                         draw_player(pos_x, pos_y)
 
@@ -166,15 +168,25 @@ def draw_ground_cube(pos_x, pos_y, fancy):
     all_block_pos.append([pos_x, pos_y])
 
 
-def draw_winpad(pos_x, pos_y):
-    winpad.setposition(pos_x, pos_y)
-
-
 def draw_grey_cube(pos_x, pos_y, dark):
     if dark:
         dark_grey_block.clone().setposition(pos_x + 1, pos_y - 1)
     else:
         grey_block.clone().setposition(pos_x + 1, pos_y - 1)
+
+
+def draw_green_door(pos_x, pos_y):
+    green_door_block.clone().setposition(pos_x, pos_y - 5)
+    green_door_block_a.clone().setposition(pos_x, pos_y - 7)
+    green_door_block_b.clone().setposition(pos_x, pos_y + 20)
+    green_door_block_c.clone().setposition(pos_x, pos_y + 20)
+
+
+def draw_grey_door(pos_x, pos_y):
+    grey_door_block.clone().setposition(pos_x, pos_y - 5)
+    grey_door_block_a.clone().setposition(pos_x, pos_y - 7)
+    grey_door_block_b.clone().setposition(pos_x, pos_y + 20)
+    grey_door_block_c.clone().setposition(pos_x, pos_y + 20)
 
 
 def draw_platform(pos_x, pos_y):
@@ -199,13 +211,13 @@ def draw_lift(pos_x, pos_y):
 
 def draw_switch(pos_x, pos_y):
     switch_block.clone().setposition(pos_x, pos_y - 5)
-    switch_block_fancy.clone().setposition(pos_x, pos_y - 5)
+    switch_block_fancy.clone().setposition(pos_x, pos_y - 7)
     all_switch_pos.append([pos_x, pos_y])
 
 
 def draw_timer_switch():
     timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
-    timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 5)
+    timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 7)
     draw_timer_switch_deco_1()
     draw_timer_switch_deco_2()
 
@@ -510,7 +522,7 @@ def right():
 
 
 def escape():
-    if not current_file == "main_menu":
+    if not current_file == "main_menu" and not drawing and not player_falling and not player_moving and not player_teleporting and not switching_teleporters:
         unload_level()
         print("Unloaded level")
         screen_setup()

@@ -59,6 +59,38 @@ fancy_block.shapesize(.5)
 fancy_block.color("black")
 
 # Interact-able
+# Green door
+level_sel_char = "|"
+green_door_block = base_triangle.clone()
+green_door_block.setposition(600, 500)
+green_door_block.color("lawn green")
+green_door_block.tilt(90)
+
+green_door_block_a = green_door_block.clone()
+green_door_block_a.shapesize(0.5)
+green_door_block_a.color("lime")
+
+green_door_block_b = green_door_block_a.clone()
+green_door_block_b.tilt(180)
+green_door_block_b.color("lawn green")
+
+green_door_block_c = green_door_block_a.clone()
+green_door_block_c.color("lawn green")
+
+# Grey door
+grey_door_block = green_door_block.clone()
+grey_door_block.color("grey")
+
+grey_door_block_a = green_door_block_a.clone()
+grey_door_block_a.color("grey25")
+
+grey_door_block_b = green_door_block_b.clone()
+grey_door_block_b.color("grey")
+
+grey_door_block_c = green_door_block_c.clone()
+grey_door_block_c.color("grey")
+
+# Other interact-able
 platform_char = "~"
 platform_block = base_block.clone()
 platform_block.tilt(90)
@@ -77,7 +109,6 @@ switch_block.color("cyan")
 switch_block.tilt(90)
 
 switch_block_fancy = switch_block.clone()
-
 switch_block_fancy.shapesize(.5)
 switch_block_fancy.color("cyan4")
 
@@ -115,4 +146,4 @@ interact_indicator_base.tilt(180)
 # Winpad
 winpad_char = "!"
 winpad = base_block.clone()
-winpad.color("lime")
+winpad.color("green yellow")
