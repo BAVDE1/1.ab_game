@@ -67,6 +67,7 @@ def draw_lift(pos_x, pos_y):
     lr = lift_block_a.clone()
     lr.setposition(pos_x, pos_y + 5)
     lr.shape("rectangle")
+    lift_block_b.clone().setposition(pos_x, pos_y - 1)
 
 
 def draw_timer_switches(all_timer_switch_pos, timer_switch):

@@ -282,7 +282,7 @@ def interact():
 
         # Level select
         for base_lvl_sel_pos in all_base_lvl_sel_pos:
-            if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]):
+            if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]) and current_file == "lobby":
                 go_to_level(str(base_lvl_sel_pos[2]))
 
 
@@ -417,7 +417,7 @@ def check_for_interact_able():
 
     # Level select
     for base_lvl_sel_pos in all_base_lvl_sel_pos:
-        if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]):
+        if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]) and current_file == "lobby":
             green_interaction_indicator.setposition(base_lvl_sel_pos[0], base_lvl_sel_pos[1] + 40)
             return None
 
@@ -558,6 +558,6 @@ def unload_level():
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("lobby")
+    load_level("3")
 
 wind.mainloop()

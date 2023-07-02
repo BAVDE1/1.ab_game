@@ -101,6 +101,11 @@ lift_block_a = platform_block.clone()
 lift_block_a.shapesize(0.3)
 lift_block_a.color("cyan")
 
+lift_block_b = base_triangle.clone()
+lift_block_b.shapesize(0.6)
+lift_block_b.tilt(-90)
+lift_block_b.color("cyan")
+
 switch_char = "^"
 switch_block = base_triangle.clone()
 switch_block.setposition(500, 470)
