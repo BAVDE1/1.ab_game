@@ -328,7 +328,7 @@ def timer_switch_interact():
     global timer_enabled
     timer_enabled = True
     time_pressed = time.time()
-    timer_sec = 8
+    timer_sec = 10
     while time.time() - time_pressed < timer_sec:
         time.sleep(0.2)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
@@ -488,6 +488,7 @@ def go_to_level(level_to_load):
     load_level(level_to_load)
 
 
+# Use go_to_level to load levels, not this
 def load_level(level_to_load):
     global current_file
     current_file = level_to_load
