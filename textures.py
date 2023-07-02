@@ -60,7 +60,6 @@ fancy_block.color("black")
 
 # Interact-able
 # Green door
-level_sel_char = "|"
 green_door_block = base_triangle.clone()
 green_door_block.setposition(600, 500)
 green_door_block.color("lawn green")

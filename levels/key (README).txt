@@ -1,4 +1,4 @@
-NOTE: levels are free to be changed, but avoid touching the lobby, or at least not the positions of the level selectors in the lobby
+NOTE: levels are free to be changed, but avoid touching the lobby, or at least not the level selectors in the lobby
 
 Normal blocks:
 # = normal block

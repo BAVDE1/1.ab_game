@@ -2,7 +2,7 @@ import distutils.util
 
 save_file = "save.txt"
 sv_lines = []
-amount_of_levels = 6
+num_of_levels = 6
 
 
 def read_save_file():
@@ -14,8 +14,8 @@ def read_save_file():
             line = line.replace(" ", "")
             line = line.replace("[", "")
             line = line.replace("]", "")
-            num = line.split(",")
-            sv_lines.append([int(num[0]), distutils.util.strtobool(num[1])])
+            sp = line.split(",")
+            sv_lines.append([int(sp[0]), distutils.util.strtobool(sp[1])])
     check_integrity()
 
 
@@ -25,6 +25,13 @@ def is_level_complete(level_num):
         if level[0] == level_num and level[1]:
             is_complete = True
     return is_complete
+
+
+def is_level_unlocked(level_num):
+    is_unlocked = False
+    if level_num == 1 or is_level_complete(level_num - 1):
+        is_unlocked = True
+    return is_unlocked
 
 
 def complete_level(level_num):
@@ -47,9 +54,9 @@ def check_integrity():
             print("ERROR appended: changed to: ", should_be_num)
 
     # Check amount of levels in list, and append
-    if not len(sv_lines) == amount_of_levels:
-        needs = amount_of_levels - len(sv_lines)
+    if not len(sv_lines) == num_of_levels:
+        needs = num_of_levels - len(sv_lines)
         for i in range(needs):
-            needs = amount_of_levels - len(sv_lines)
-            sv_lines.append([amount_of_levels - (needs - 1), 0])
+            needs = num_of_levels - len(sv_lines)
+            sv_lines.append([num_of_levels - (needs - 1), 0])
             print("ERROR appended: added ", needs, " lines")

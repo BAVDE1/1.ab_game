@@ -1,4 +1,24 @@
 from textures import *
+from save_handler import is_level_complete
+
+
+def draw_level_selectors(all_base_lvl_sel_pos):
+    on_level = 0
+
+    for base_lvl_sel_pos in all_base_lvl_sel_pos:
+        on_level += 1
+
+        # Level select
+        if on_level == 1 or is_level_complete(on_level - 1):
+            draw_green_door(base_lvl_sel_pos[0], base_lvl_sel_pos[1])
+        else:
+            draw_grey_door(base_lvl_sel_pos[0], base_lvl_sel_pos[1])
+
+        # Completion star
+        if is_level_complete(on_level):
+            draw_green_door_star(base_lvl_sel_pos[0], base_lvl_sel_pos[1])
+        else:
+            draw_grey_door_star(base_lvl_sel_pos[0], base_lvl_sel_pos[1])
 
 
 def draw_ground_cube(pos_x, pos_y, fancy):
@@ -15,15 +35,21 @@ def draw_grey_cube(pos_x, pos_y, dark):
 
 
 def draw_green_door(pos_x, pos_y):
-    green_door_block.clone().setposition(pos_x, pos_y - 5)
-    green_door_block_a.clone().setposition(pos_x, pos_y - 7)
+    green_door_block.clone().setposition(pos_x, pos_y - 3)
+    green_door_block_a.clone().setposition(pos_x, pos_y - 6)
+
+
+def draw_green_door_star(pos_x, pos_y):
     green_door_block_b.clone().setposition(pos_x, pos_y + 20)
     green_door_block_c.clone().setposition(pos_x, pos_y + 20)
 
 
 def draw_grey_door(pos_x, pos_y):
-    grey_door_block.clone().setposition(pos_x, pos_y - 5)
-    grey_door_block_a.clone().setposition(pos_x, pos_y - 7)
+    grey_door_block.clone().setposition(pos_x, pos_y - 3)
+    grey_door_block_a.clone().setposition(pos_x, pos_y - 6)
+
+
+def draw_grey_door_star(pos_x, pos_y):
     grey_door_block_b.clone().setposition(pos_x, pos_y + 20)
     grey_door_block_c.clone().setposition(pos_x, pos_y + 20)
 

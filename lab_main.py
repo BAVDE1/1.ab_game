@@ -22,7 +22,7 @@ interact_indicator = interact_indicator_base.clone()
 green_interaction_indicator = green_interaction_indicator_base.clone()
 
 
-def reset_textures():
+def reset_ot_textures():
     global player
     global active_lift
     global interact_indicator
@@ -63,7 +63,6 @@ all_platform_pos = []
 all_lift_pos = []
 all_switch_pos = []
 all_timer_switch_pos = []
-all_level_sel_pos = []
 winpad_pos = []
 
 # Tp lists
@@ -80,6 +79,9 @@ tp_7 = []
 tp_8 = []
 tp_9 = []
 all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+
+# [xcor, ycor, level number]
+all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [100, -360, 4], [0.0, -360, 5], [-100, -360, 6]]
 
 timer_switch = []  # Only one entry allowed
 
@@ -130,9 +132,6 @@ def draw_level(times):
                     elif char == fancy_ground_char:
                         draw_ground_cube(pos_x, pos_y, True)
                         all_block_pos.append([pos_x, pos_y])
-                    elif char == level_sel_char:
-                        draw_green_door(pos_x, pos_y)
-                        all_level_sel_pos.append([pos_x, pos_y])
                     elif char == platform_char:
                         draw_platform(pos_x, pos_y)
                         all_block_pos.append([pos_x, pos_y])
@@ -149,10 +148,11 @@ def draw_level(times):
                         all_timer_switch_pos.append([pos_x, pos_y])
                     elif char == winpad_char:
                         draw_green_door(pos_x, pos_y)
+                        draw_green_door_star(pos_x, pos_y)
                         if not len(winpad_pos) > 2:
                             winpad_pos.append([pos_x, pos_y])
                         else:
-                            raise ValueError("Too many winpads in level")
+                            raise ValueError("Too many win-pads in level")
                     elif char == player_char:
                         draw_player(pos_x, pos_y)
 
@@ -175,13 +175,15 @@ def draw_level(times):
         # To be done after base level is drawn
         if times == 2:
             draw_timer_switches(all_timer_switch_pos, timer_switch)
+            if current_file == "lobby":
+                draw_level_selectors(all_base_lvl_sel_pos)
             draw_teleporters()
 
             print("Draw level complete")
 
 
 def draw_player(pos_x, pos_y):
-    reset_textures()
+    reset_ot_textures()
     player.setposition(pos_x, pos_y)
 
 
@@ -275,12 +277,13 @@ def interact():
         # Winpad
         for winpad_p in winpad_pos:
             if player.xcor() == winpad_p[0] and player.ycor() == winpad_p[1]:
-                print("YOU WIN!")
+                complete_level(int(current_file))
+                go_to_level("lobby")
 
         # Level select
-        for level_sel_pos in all_level_sel_pos:
-            if player.xcor() == level_sel_pos[0] and player.ycor() == level_sel_pos[1]:
-                print("select level")
+        for base_lvl_sel_pos in all_base_lvl_sel_pos:
+            if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]):
+                go_to_level(str(base_lvl_sel_pos[2]))
 
 
 def lift_interact():
@@ -413,9 +416,9 @@ def check_for_interact_able():
             return None
 
     # Level select
-    for level_sel_pos in all_level_sel_pos:
-        if player.xcor() == level_sel_pos[0] and player.ycor() == level_sel_pos[1]:
-            green_interaction_indicator.setposition(level_sel_pos[0], level_sel_pos[1] + 40)
+    for base_lvl_sel_pos in all_base_lvl_sel_pos:
+        if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]):
+            green_interaction_indicator.setposition(base_lvl_sel_pos[0], base_lvl_sel_pos[1] + 40)
             return None
 
     # Removes indicator
@@ -440,7 +443,6 @@ def left():
         player.setx(player.xcor() - 20)
         check_for_ground()
         check_for_interact_able()
-        # check_for_interact_able()  # Check twice cause turtle is slow
         player_moving = False
 
 
@@ -452,17 +454,14 @@ def right():
         player.setx(player.xcor() + 20)
         check_for_ground()
         check_for_interact_able()
-        # check_for_interact_able()  # Check twice cause turtle is slow
         player_moving = False
 
 
 def escape():
     if not current_file == "lobby" and not drawing and not player_falling and not player_moving and not player_teleporting and not switching_teleporters:
-        unload_level()
-        print("Unloaded level")
-        screen_setup()
-        load_level("lobby")
+        go_to_level("lobby")
     elif current_file == "lobby":
+        print("Exiting game")
         wind.bye()
 
 
@@ -482,15 +481,22 @@ def setup_listeners():
 ###############
 # ----Init----#
 ###############
+def go_to_level(level_to_load):
+    unload_level()
+    print("Unloaded level")
+    screen_setup()
+    load_level(level_to_load)
+
+
 def load_level(level_to_load):
     global current_file
+    current_file = level_to_load
 
     setup_listeners()
 
     # draw level
     print("Reading level")
     read_level(level_to_load)
-    current_file = level_to_load
 
     # init check for ground
     print("Checking for ground")
@@ -510,7 +516,6 @@ def unload_level():
     global all_lift_pos
     global all_switch_pos
     global all_timer_switch_pos
-    global all_level_sel_pos
     global winpad_pos
     lines = []
     all_block_pos = []  # [0]=xcor, [1]=ycor
@@ -518,7 +523,6 @@ def unload_level():
     all_lift_pos = []
     all_switch_pos = []
     all_timer_switch_pos = []
-    all_level_sel_pos = []
     winpad_pos = []
 
     global tp_1
