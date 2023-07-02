@@ -117,7 +117,7 @@ switch_block_fancy.shapesize(.5)
 switch_block_fancy.color("cyan4")
 
 # Timer switch
-timer_switch_char = '"'
+blue_timer_switch_char = '"'
 timer_switch_block = switch_block.clone()
 timer_progress_block = base_block.clone()
 timer_progress_block.setposition(600, 600)

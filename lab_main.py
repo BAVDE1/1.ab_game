@@ -61,29 +61,33 @@ lines = []
 all_block_pos = []  # [0]=xcor, [1]=ycor
 all_platform_pos = []
 all_lift_pos = []
-all_switch_pos = []
-all_timer_switch_pos = []
+all_blue_switch_pos = []
+all_red_switch_pos = []
+blue_timer_switch = []  # Only one pair of pos entry allowed
+red_timer_switch = []  # Only one pair of pos entry allowed
 winpad_pos = []
 
 # Tp lists
-tp_base_char = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-tp_first_char = ["a", "c", "e", "g", "i", "k", "m", "o", "q"]
-tp_second_char = ["b", "d", "f", "h", "j", "l", "n", "p", "r"]
-tp_1 = []
-tp_2 = []
-tp_3 = []
-tp_4 = []
-tp_5 = []
-tp_6 = []
-tp_7 = []
-tp_8 = []
-tp_9 = []
-all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+blue_tp_base_char = ["1", "2", "3", "4", "5"]
+red_tp_base_char = ["6", "7", "8", "9"]
+blue_tp_first_char = ["a", "c", "e", "g", "i"]
+red_tp_first_char = ["k", "m", "o", "q"]
+blue_tp_second_char = ["b", "d", "f", "h", "j"]
+red_tp_second_char = ["l", "n", "p", "r"]
+blue_tp_1 = []
+blue_tp_2 = []
+blue_tp_3 = []
+blue_tp_4 = []
+blue_tp_5 = []
+red_tp_6 = []
+red_tp_7 = []
+red_tp_8 = []
+red_tp_9 = []
+all_blue_tp = [blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4, blue_tp_5]
+all_red_tp = [red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
 # [xcor, ycor, level number]
 all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [100, -360, 4], [0.0, -360, 5], [-100, -360, 6]]
-
-timer_switch = []  # Only one entry allowed
 
 
 ####################
@@ -111,6 +115,8 @@ def read_level(level_to_load):
 
 # Times=0: base level drawn and base tp points saved, times=1: first tp points saved, times=2: second tp points saved, teleporters drawn and timers drawn
 def draw_level(times):
+    global blue_timer_switch
+
     if lines:
         line_num = 0
         for line in lines:
@@ -143,9 +149,9 @@ def draw_level(times):
                         all_lift_pos.append([pos_x, pos_y])
                     elif char == switch_char:
                         draw_switch(pos_x, pos_y)
-                        all_switch_pos.append([pos_x, pos_y])
-                    elif char == timer_switch_char:
-                        all_timer_switch_pos.append([pos_x, pos_y])
+                        all_blue_switch_pos.append([pos_x, pos_y])
+                    elif char == blue_timer_switch_char:
+                        blue_timer_switch = [pos_x, pos_y]
                     elif char == winpad_char:
                         draw_green_door(pos_x, pos_y)
                         draw_green_door_star(pos_x, pos_y)
@@ -157,26 +163,35 @@ def draw_level(times):
                         draw_player(pos_x, pos_y)
 
                 # Teleporters
-                for base_tp_char in tp_base_char:
+                for base_tp_char in blue_tp_base_char:
                     if char == base_tp_char and times == 0:
                         # add to list, render after level has been drawn
-                        all_tp[int(char) - 1].insert(0, [pos_x, pos_y])
+                        all_blue_tp[int(char) - 1].insert(0, [pos_x, pos_y])
 
-                for first_tp_char in tp_first_char:
+                for first_tp_char in blue_tp_first_char:
                     if char == first_tp_char and times == 1:
                         # add to list, render after level has been drawn
-                        all_tp[tp_first_char.index(char)].insert(1, [pos_x, pos_y])
+                        all_blue_tp[blue_tp_first_char.index(char)].insert(1, [pos_x, pos_y])
 
-                for second_tp_char in tp_second_char:
+                for second_tp_char in blue_tp_second_char:
                     if char == second_tp_char and times == 2:
                         # add to list, render after level has been drawn
-                        all_tp[tp_second_char.index(char)].insert(2, [pos_x, pos_y])
+                        all_blue_tp[blue_tp_second_char.index(char)].insert(2, [pos_x, pos_y])
 
         # To be done after base level is drawn
         if times == 2:
-            draw_timer_switches(all_timer_switch_pos, timer_switch)
+
+            # Timer switches
+            if len(blue_timer_switch) > 2:
+                raise ValueError("Only one timer switch is allowed!")
+            elif len(blue_timer_switch) == 2:
+                draw_blue_timer_switch(blue_timer_switch)
+
+            # Level selectors
             if current_file == "lobby":
                 draw_level_selectors(all_base_lvl_sel_pos)
+
+            # Teleporters
             draw_teleporters()
 
             print("Draw level complete")
@@ -188,9 +203,9 @@ def draw_player(pos_x, pos_y):
 
 
 def draw_teleporters():
-    for tp_list in all_tp:
+    for tp_list in all_blue_tp:
         if tp_list:
-            all_tp[all_tp.index(tp_list)].append(False)  # adds 'switched' value to end
+            all_blue_tp[all_blue_tp.index(tp_list)].append(False)  # adds 'switched' value to end
 
             if len(tp_list) == 4:
                 base_pos = tp_list[0]
@@ -260,17 +275,16 @@ def interact():
                 lift_interact()
 
         # Switch
-        for switch_pos in all_switch_pos:
+        for switch_pos in all_blue_switch_pos:
             if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
                 switch_interact()
 
         # Timer switch
-        for timer_switch_pos in all_timer_switch_pos:
-            if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
-                threading.Thread(target=timer_switch_interact).start()
+        if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not timer_enabled:
+            threading.Thread(target=timer_switch_interact).start()
 
         # teleporter
-        for tp_list in all_tp:
+        for tp_list in all_blue_tp:
             if tp_list:
                 teleporter_interact(tp_list)
 
@@ -308,7 +322,7 @@ def switch_interact():
     global switching_teleporters
     switching_teleporters = True
     wind.delay(load_wind_delay)
-    for tp_list in all_tp:
+    for tp_list in all_blue_tp:
         if tp_list:
             base_pos = tp_list[0]
             first_pos = tp_list[1]
@@ -332,11 +346,11 @@ def timer_switch_interact():
     while time.time() - time_pressed < timer_sec:
         time.sleep(0.2)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
-        draw_timer_switch_progress(timer_percent, timer_switch)
+        draw_timer_switch_progress(timer_percent, blue_timer_switch)
     switch_interact()
     timer_enabled = False
-    draw_timer_switch_deco_1(timer_switch)
-    draw_timer_switch_deco_2(timer_switch)
+    draw_timer_switch_deco_1(blue_timer_switch)
+    draw_timer_switch_deco_2(blue_timer_switch)
     check_for_interact_able()
 
 
@@ -379,20 +393,19 @@ def check_for_interact_able():
             interact_indicator.setposition(lift_pos[0], lift_pos[1] + 50)
             return None
 
-        # Switch
-    for switch_pos in all_switch_pos:
+    # Switch
+    for switch_pos in all_blue_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
             interact_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
 
-        # Timer switch
-    for timer_switch_pos in all_timer_switch_pos:
-        if player.xcor() == timer_switch_pos[0] and player.ycor() == timer_switch_pos[1] and not timer_enabled:
-            interact_indicator.setposition(timer_switch_pos[0], timer_switch_pos[1] + 30)
-            return None
+    # Timer switch
+    if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not timer_enabled:
+        interact_indicator.setposition(blue_timer_switch[0], blue_timer_switch[1] + 30)
+        return None
 
-        # Teleporter
-    for tp_list in all_tp:
+    # Teleporter
+    for tp_list in all_blue_tp:
         if tp_list:
             base_pos = tp_list[0]
             first_pos = tp_list[1]
@@ -515,49 +528,52 @@ def unload_level():
     global all_block_pos
     global all_platform_pos
     global all_lift_pos
-    global all_switch_pos
-    global all_timer_switch_pos
+    global all_blue_switch_pos
+    global all_red_switch_pos
+    global blue_timer_switch
+    global red_timer_switch
     global winpad_pos
     lines = []
     all_block_pos = []  # [0]=xcor, [1]=ycor
     all_platform_pos = []
     all_lift_pos = []
-    all_switch_pos = []
-    all_timer_switch_pos = []
+    all_blue_switch_pos = []
+    all_red_switch_pos = []
+    blue_timer_switch = []
+    red_timer_switch = []
     winpad_pos = []
 
-    global tp_1
-    global tp_2
-    global tp_3
-    global tp_4
-    global tp_5
-    global tp_6
-    global tp_7
-    global tp_8
-    global tp_9
-    tp_1 = []
-    tp_2 = []
-    tp_3 = []
-    tp_4 = []
-    tp_5 = []
-    tp_6 = []
-    tp_7 = []
-    tp_8 = []
-    tp_9 = []
+    global blue_tp_1
+    global blue_tp_2
+    global blue_tp_3
+    global blue_tp_4
+    global blue_tp_5
+    global red_tp_6
+    global red_tp_7
+    global red_tp_8
+    global red_tp_9
+    blue_tp_1 = []
+    blue_tp_2 = []
+    blue_tp_3 = []
+    blue_tp_4 = []
+    blue_tp_5 = []
+    red_tp_6 = []
+    red_tp_7 = []
+    red_tp_8 = []
+    red_tp_9 = []
 
-    global all_tp
-    all_tp = [tp_1, tp_2, tp_3, tp_4, tp_5, tp_6, tp_7, tp_8, tp_9]
+    global all_blue_tp
+    global all_red_tp
+    all_blue_tp = [blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4, blue_tp_5]
+    all_red_tp = [red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
     global current_file
     current_file = ""
-
-    global timer_switch
-    timer_switch = []
 
 
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("3")
+    load_level("lobby")
 
 wind.mainloop()

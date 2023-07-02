@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="added comments">
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="made level 3, fixed lift clarity">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/draw_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/draw_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
@@ -60,7 +60,7 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="lab_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="run_lab" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="1.ab_game" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -72,7 +72,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\bryce\PycharmProjects\1.ab_game\lab_main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lab_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -83,7 +83,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.lab_main" />
+        <item itemvalue="Python.run_lab" />
       </list>
     </recent_temporary>
   </component>
@@ -192,7 +192,15 @@
       <option name="project" value="LOCAL" />
       <updated>1688284765670</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="made level 3, fixed lift clarity">
+      <option name="closed" value="true" />
+      <created>1688289119620</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1688289119620</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -210,6 +218,7 @@
     <MESSAGE value="fixed buggy interaction indicator" />
     <MESSAGE value="save and load functionality implemented" />
     <MESSAGE value="added comments" />
-    <option name="LAST_COMMIT_MESSAGE" value="added comments" />
+    <MESSAGE value="made level 3, fixed lift clarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="made level 3, fixed lift clarity" />
   </component>
 </project>

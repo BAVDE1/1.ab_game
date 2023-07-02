@@ -70,17 +70,7 @@ def draw_lift(pos_x, pos_y):
     lift_block_b.clone().setposition(pos_x, pos_y - 1)
 
 
-def draw_timer_switches(all_timer_switch_pos, timer_switch):
-    for ts in all_timer_switch_pos:
-        if len(timer_switch) == 0:
-            timer_switch.append(ts[0])
-            timer_switch.append(ts[1])
-            draw_timer_switch(timer_switch)
-        else:
-            raise ValueError("Only one timer switch is allowed!")
-
-
-def draw_timer_switch(timer_switch):
+def draw_blue_timer_switch(timer_switch):
     timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
     timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 7)
     draw_timer_switch_deco_1(timer_switch)
