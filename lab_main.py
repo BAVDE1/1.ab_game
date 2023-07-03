@@ -11,7 +11,7 @@ width = 30
 height = 40
 
 load_wind_delay = 0
-run_wind_delay = 1
+run_wind_delay = 10
 
 wind = turtle.Screen()
 
@@ -20,6 +20,7 @@ player = turtle.Turtle()
 active_lift = platform_block.clone()
 interact_indicator = interact_indicator_base.clone()
 green_interaction_indicator = green_interaction_indicator_base.clone()
+red_interaction_indicator = red_interaction_indicator_base.clone()
 
 
 def reset_ot_textures():
@@ -27,11 +28,13 @@ def reset_ot_textures():
     global active_lift
     global interact_indicator
     global green_interaction_indicator
+    global red_interaction_indicator
 
     player = player_base.clone()
     active_lift = platform_block.clone()
     interact_indicator = interact_indicator_base.clone()
     green_interaction_indicator = green_interaction_indicator_base.clone()
+    red_interaction_indicator = red_interaction_indicator_base.clone()
 
 
 # Screen setup
@@ -86,7 +89,7 @@ red_tp_9 = []
 all_blue_tp = [blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4, blue_tp_5]
 all_red_tp = [red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
-# [xcor, ycor, level number]
+# Level select pos (only in lobby), Order: [xcor, ycor, level number]
 all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [100, -360, 4], [0.0, -360, 5], [-100, -360, 6]]
 
 
@@ -147,9 +150,12 @@ def draw_level(times):
                         all_block_pos.append([pos_x, pos_y])
                         all_platform_pos.append([pos_x, pos_y])
                         all_lift_pos.append([pos_x, pos_y])
-                    elif char == switch_char:
-                        draw_switch(pos_x, pos_y)
+                    elif char == blue_switch_char:
+                        draw_blue_switch(pos_x, pos_y)
                         all_blue_switch_pos.append([pos_x, pos_y])
+                    elif char == red_switch_char:
+                        draw_red_switch(pos_x, pos_y)
+                        all_red_switch_pos.append([pos_x, pos_y])
                     elif char == blue_timer_switch_char:
                         blue_timer_switch = [pos_x, pos_y]
                     elif char == winpad_char:
@@ -170,20 +176,31 @@ def draw_level(times):
 
                 for first_tp_char in blue_tp_first_char:
                     if char == first_tp_char and times == 1:
-                        # add to list, render after level has been drawn
                         all_blue_tp[blue_tp_first_char.index(char)].insert(1, [pos_x, pos_y])
 
                 for second_tp_char in blue_tp_second_char:
                     if char == second_tp_char and times == 2:
-                        # add to list, render after level has been drawn
                         all_blue_tp[blue_tp_second_char.index(char)].insert(2, [pos_x, pos_y])
+
+                # Red teleporters
+                for base_tp_char in red_tp_base_char:
+                    if char == base_tp_char and times == 0:
+                        all_red_tp[int(char) - 6].insert(0, [pos_x, pos_y])
+
+                for first_tp_char in red_tp_first_char:
+                    if char == first_tp_char and times == 1:
+                        all_red_tp[red_tp_first_char.index(char)].insert(1, [pos_x, pos_y])
+
+                for second_tp_char in red_tp_second_char:
+                    if char == second_tp_char and times == 2:
+                        all_red_tp[red_tp_second_char.index(char)].insert(2, [pos_x, pos_y])
 
         # To be done after base level is drawn
         if times == 2:
 
             # Timer switches
             if len(blue_timer_switch) > 2:
-                raise ValueError("Only one timer switch is allowed!")
+                raise ValueError("Only one blue timer switch is allowed!")
             elif len(blue_timer_switch) == 2:
                 draw_blue_timer_switch(blue_timer_switch)
 
@@ -192,7 +209,8 @@ def draw_level(times):
                 draw_level_selectors(all_base_lvl_sel_pos)
 
             # Teleporters
-            draw_teleporters()
+            draw_blue_teleporters()
+            draw_red_teleporters()
 
             print("Draw level complete")
 
@@ -202,7 +220,7 @@ def draw_player(pos_x, pos_y):
     player.setposition(pos_x, pos_y)
 
 
-def draw_teleporters():
+def draw_blue_teleporters():
     for tp_list in all_blue_tp:
         if tp_list:
             all_blue_tp[all_blue_tp.index(tp_list)].append(False)  # adds 'switched' value to end
@@ -212,9 +230,27 @@ def draw_teleporters():
                 first_pos = tp_list[1]
                 second_pos = tp_list[2]
 
-                draw_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
-                draw_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
-                draw_tp_base(base_pos[0], base_pos[1])
+                draw_blue_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
+                draw_blue_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
+                draw_blue_tp_base(base_pos[0], base_pos[1])
+            else:
+                raise ValueError("Incorrect amount of values in list: ", tp_list,
+                                 " (Must be exactly 3 entries - base, tp point 1, tp point 2, False)")
+
+
+def draw_red_teleporters():
+    for tp_list in all_red_tp:
+        if tp_list:
+            all_red_tp[all_red_tp.index(tp_list)].append(False)  # adds 'switched' value to end
+
+            if len(tp_list) == 4:
+                base_pos = tp_list[0]
+                first_pos = tp_list[1]
+                second_pos = tp_list[2]
+
+                draw_red_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], True)
+                draw_red_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], False)
+                draw_red_tp_base(base_pos[0], base_pos[1])
             else:
                 raise ValueError("Incorrect amount of values in list: ", tp_list,
                                  " (Must be exactly 3 entries - base, tp point 1, tp point 2, False)")
@@ -329,9 +365,9 @@ def switch_interact():
             second_pos = tp_list[2]
             current_switch = tp_list[3]
 
-            draw_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
-            draw_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
-            draw_tp_base(base_pos[0], base_pos[1])
+            draw_blue_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
+            draw_blue_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
+            draw_blue_tp_base(base_pos[0], base_pos[1])
 
             tp_list[3] = not current_switch
     wind.delay(run_wind_delay)
@@ -393,10 +429,16 @@ def check_for_interact_able():
             interact_indicator.setposition(lift_pos[0], lift_pos[1] + 50)
             return None
 
-    # Switch
+    # Blue switch
     for switch_pos in all_blue_switch_pos:
         if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
             interact_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
+            return None
+
+    # Red switch
+    for switch_pos in all_red_switch_pos:
+        if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1]:
+            red_interaction_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
 
     # Timer switch
@@ -434,17 +476,18 @@ def check_for_interact_able():
             green_interaction_indicator.setposition(base_lvl_sel_pos[0], base_lvl_sel_pos[1] + 40)
             return None
 
-    # Removes indicator
-    interact_indicator.setposition(switch_block.xcor(), switch_block.ycor())
-    green_interaction_indicator.setposition(switch_block.xcor(), switch_block.ycor())
+    # Moves indicator off-screen
+    interact_indicator.setposition(500, 500)
+    green_interaction_indicator.setposition(500, 500)
+    red_interaction_indicator.setposition(500, 500)
 
 
 ###################
 # ----Controls----#
 ###################
-left_keys = ["Left", "a"]
-right_keys = ["Right", "d"]
-interact_key = ["space", "z", "m"]
+left_keys = ["Left", "a", "A"]
+right_keys = ["Right", "d", "D"]
+interact_key = ["space", "z", "m", "Z", "M"]
 escape_key = ["Escape", "Delete"]
 
 
@@ -482,11 +525,15 @@ def setup_listeners():
     wind.listen()
     wind.onkeypress(left, left_keys[0])
     wind.onkeypress(left, left_keys[1])
+    wind.onkeypress(left, left_keys[2])
     wind.onkeypress(right, right_keys[0])
     wind.onkeypress(right, right_keys[1])
+    wind.onkeypress(right, right_keys[2])
     wind.onkeypress(interact, interact_key[0])
     wind.onkeypress(interact, interact_key[1])
     wind.onkeypress(interact, interact_key[2])
+    wind.onkeypress(interact, interact_key[3])
+    wind.onkeypress(interact, interact_key[4])
     wind.onkeypress(escape, escape_key[0])
     wind.onkeypress(escape, escape_key[1])
 
@@ -574,6 +621,6 @@ def unload_level():
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("lobby")
+    load_level("4")
 
 wind.mainloop()

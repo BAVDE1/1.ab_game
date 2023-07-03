@@ -91,22 +91,46 @@ def draw_timer_switch_progress(percent, timer_switch):
     c.setposition(timer_switch[0], timer_switch[1] - 20)
 
 
-def draw_switch(pos_x, pos_y):
-    switch_block.clone().setposition(pos_x, pos_y - 5)
-    switch_block_fancy.clone().setposition(pos_x, pos_y - 7)
+def draw_blue_switch(pos_x, pos_y):
+    blue_switch_block.clone().setposition(pos_x, pos_y - 5)
+    blue_switch_block_fancy.clone().setposition(pos_x, pos_y - 7)
 
 
-def draw_tp_base(pos_x, pos_y):
+def draw_red_switch(pos_x, pos_y):
+    red_switch_block.clone().setposition(pos_x, pos_y - 5)
+    red_switch_block_fancy.clone().setposition(pos_x, pos_y - 7)
+
+
+def draw_blue_tp_base(pos_x, pos_y):
     tp_block_blue.clone().setposition(pos_x, pos_y)  # Must be done in main
     f = tp_block_dull_blue.clone()
     f.shapesize(.5)
     f.setposition(pos_x, pos_y)
 
 
-def draw_tp_point(base_x, base_y, pos_x, pos_y, active):
+def draw_red_tp_base(pos_x, pos_y):
+    tp_block_red.clone().setposition(pos_x, pos_y)  # Must be done in main
+    f = tp_block_dull_red.clone()
+    f.shapesize(.5)
+    f.setposition(pos_x, pos_y)
+
+
+def draw_blue_tp_point(base_x, base_y, pos_x, pos_y, active):
     b = tp_block_dull_blue.clone()  # Must be done in main
     if active:
         b = tp_block_blue.clone()
+    b.setposition(base_x, base_y)
+    b.pendown()
+    b.pensize(2)
+    b.shapesize(0.8)
+    b.setposition(pos_x, pos_y)
+    b.penup()
+
+
+def draw_red_tp_point(base_x, base_y, pos_x, pos_y, active):
+    b = tp_block_dull_red.clone()  # Must be done in main
+    if active:
+        b = tp_block_red.clone()
     b.setposition(base_x, base_y)
     b.pendown()
     b.pensize(2)

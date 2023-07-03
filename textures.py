@@ -106,19 +106,26 @@ lift_block_b.shapesize(0.6)
 lift_block_b.tilt(-90)
 lift_block_b.color("cyan")
 
-switch_char = "^"
-switch_block = base_triangle.clone()
-switch_block.setposition(500, 470)
-switch_block.color("cyan")
-switch_block.tilt(90)
+blue_switch_char = "^"
+blue_switch_block = base_triangle.clone()
+blue_switch_block.setposition(500, 470)
+blue_switch_block.color("cyan")
+blue_switch_block.tilt(90)
 
-switch_block_fancy = switch_block.clone()
-switch_block_fancy.shapesize(.5)
-switch_block_fancy.color("cyan4")
+blue_switch_block_fancy = blue_switch_block.clone()
+blue_switch_block_fancy.shapesize(.5)
+blue_switch_block_fancy.color("cyan4")
+
+red_switch_char = "~"
+red_switch_block = blue_switch_block.clone()
+red_switch_block.color("orange red")
+
+red_switch_block_fancy = blue_switch_block_fancy.clone()
+red_switch_block_fancy.color("red")
 
 # Timer switch
 blue_timer_switch_char = '"'
-timer_switch_block = switch_block.clone()
+timer_switch_block = blue_switch_block.clone()
 timer_progress_block = base_block.clone()
 timer_progress_block.setposition(600, 600)
 timer_progress_block.color("cyan")
@@ -145,12 +152,21 @@ tp_block_dull_blue = base_circle.clone()
 tp_block_dull_blue.setposition(520, 450)
 tp_block_dull_blue.color("cyan4")
 
-interact_indicator_base = switch_block.clone()
+tp_block_red = tp_block_blue.clone()
+tp_block_red.color("orange red")
+
+tp_block_dull_red = tp_block_dull_blue.clone()
+tp_block_dull_red.color("tomato")
+
+interact_indicator_base = blue_switch_block.clone()
 interact_indicator_base.shapesize(0.5)
 interact_indicator_base.tilt(180)
 
 green_interaction_indicator_base = interact_indicator_base.clone()
 green_interaction_indicator_base.color("lawn green")
+
+red_interaction_indicator_base = interact_indicator_base.clone()
+red_interaction_indicator_base.color("orange red")
 
 # Winpad
 winpad_char = "!"
