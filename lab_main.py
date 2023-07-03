@@ -3,6 +3,7 @@ from save_handler import *
 import turtle
 import time
 import threading
+import sys
 
 ###################
 # ----Defaults----#
@@ -11,7 +12,9 @@ width = 30
 height = 40
 
 load_wind_delay = 0
-run_wind_delay = 10
+run_wind_delay = 1
+if str(sys.platform) == "linux":
+    run_wind_delay = 10
 
 wind = turtle.Screen()
 
@@ -310,17 +313,27 @@ def interact():
                 active_lift.speed(1)
                 lift_interact()
 
-        # Switch
+        # Blue switch
         for switch_pos in all_blue_switch_pos:
             if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
-                switch_interact()
+                switch_interact(True)
+
+        # Red switch
+        for switch_pos in all_red_switch_pos:
+            if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
+                switch_interact(False)
 
         # Timer switch
         if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not timer_enabled:
             threading.Thread(target=timer_switch_interact).start()
 
-        # teleporter
+        # Blue teleporter
         for tp_list in all_blue_tp:
+            if tp_list:
+                teleporter_interact(tp_list)
+
+        # Red teleporter
+        for tp_list in all_red_tp:
             if tp_list:
                 teleporter_interact(tp_list)
 
@@ -354,20 +367,29 @@ def lift_thread_a():
     active_lift.setposition(player.xcor(), player.ycor() + 4)
 
 
-def switch_interact():
+def switch_interact(is_blue):
     global switching_teleporters
     switching_teleporters = True
     wind.delay(load_wind_delay)
-    for tp_list in all_blue_tp:
+    if is_blue:
+        all_tp_list = all_blue_tp
+    else:
+        all_tp_list = all_red_tp
+    for tp_list in all_tp_list:
         if tp_list:
             base_pos = tp_list[0]
             first_pos = tp_list[1]
             second_pos = tp_list[2]
             current_switch = tp_list[3]
 
-            draw_blue_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
-            draw_blue_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
-            draw_blue_tp_base(base_pos[0], base_pos[1])
+            if is_blue:
+                draw_blue_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
+                draw_blue_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
+                draw_blue_tp_base(base_pos[0], base_pos[1])
+            else:
+                draw_red_tp_point(base_pos[0], base_pos[1], first_pos[0], first_pos[1], current_switch)
+                draw_red_tp_point(base_pos[0], base_pos[1], second_pos[0], second_pos[1], not current_switch)
+                draw_red_tp_base(base_pos[0], base_pos[1])
 
             tp_list[3] = not current_switch
     wind.delay(run_wind_delay)
@@ -446,7 +468,7 @@ def check_for_interact_able():
         interact_indicator.setposition(blue_timer_switch[0], blue_timer_switch[1] + 30)
         return None
 
-    # Teleporter
+    # blue teleporter
     for tp_list in all_blue_tp:
         if tp_list:
             base_pos = tp_list[0]
@@ -462,6 +484,24 @@ def check_for_interact_able():
                 return None
             elif player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and switched:
                 interact_indicator.setposition(second_pos[0], second_pos[1] + 30)
+                return None
+
+    # Red teleporter
+    for tp_list in all_red_tp:
+        if tp_list:
+            base_pos = tp_list[0]
+            first_pos = tp_list[1]
+            second_pos = tp_list[2]
+            switched = tp_list[3]
+
+            if player.xcor() == base_pos[0] and player.ycor() == base_pos[1]:
+                red_interaction_indicator.setposition(base_pos[0], base_pos[1] + 30)
+                return None
+            elif player.xcor() == first_pos[0] and player.ycor() == first_pos[1] and not switched:
+                red_interaction_indicator.setposition(first_pos[0], first_pos[1] + 30)
+                return None
+            elif player.xcor() == second_pos[0] and player.ycor() == second_pos[1] and switched:
+                red_interaction_indicator.setposition(second_pos[0], second_pos[1] + 30)
                 return None
 
     # Winpad

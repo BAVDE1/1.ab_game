@@ -1,4 +1,3 @@
-import sys
 import turtle
 
 # Custom shape
@@ -41,16 +40,12 @@ ground_block.color("white")
 dark_grey_char = "."
 dark_grey_block = base_block.clone()
 dark_grey_block.setposition(540, 500)
-dark_grey_block.color("grey10")
-if str(sys.platform) == "win32":
-    dark_grey_block.color("grey2")
+dark_grey_block.color("grey2")
 
 grey_char = ":"
 grey_block = base_block.clone()
 grey_block.setposition(520, 500)
-grey_block.color("grey20")
-if str(sys.platform) == "win32":
-    grey_block.color("grey5")
+grey_block.color("grey5")
 
 fancy_ground_char = "*"
 fancy_block = base_block.clone()
@@ -118,10 +113,10 @@ blue_switch_block_fancy.color("cyan4")
 
 red_switch_char = "~"
 red_switch_block = blue_switch_block.clone()
-red_switch_block.color("orange red")
+red_switch_block.color("red")
 
 red_switch_block_fancy = blue_switch_block_fancy.clone()
-red_switch_block_fancy.color("red")
+red_switch_block_fancy.color("dark red")
 
 # Timer switch
 blue_timer_switch_char = '"'
@@ -153,10 +148,10 @@ tp_block_dull_blue.setposition(520, 450)
 tp_block_dull_blue.color("cyan4")
 
 tp_block_red = tp_block_blue.clone()
-tp_block_red.color("orange red")
+tp_block_red.color("red")
 
 tp_block_dull_red = tp_block_dull_blue.clone()
-tp_block_dull_red.color("tomato")
+tp_block_dull_red.color("dark red")
 
 interact_indicator_base = blue_switch_block.clone()
 interact_indicator_base.shapesize(0.5)
@@ -166,7 +161,7 @@ green_interaction_indicator_base = interact_indicator_base.clone()
 green_interaction_indicator_base.color("lawn green")
 
 red_interaction_indicator_base = interact_indicator_base.clone()
-red_interaction_indicator_base.color("orange red")
+red_interaction_indicator_base.color("red")
 
 # Winpad
 winpad_char = "!"
