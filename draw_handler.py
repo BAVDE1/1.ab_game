@@ -71,22 +71,43 @@ def draw_lift(pos_x, pos_y):
 
 
 def draw_blue_timer_switch(timer_switch):
-    timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
-    timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 7)
-    draw_timer_switch_deco_1(timer_switch)
-    draw_timer_switch_deco_2(timer_switch)
+    blue_timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
+    blue_timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 7)
+    draw_blue_timer_switch_deco_1(timer_switch)
+    draw_blue_timer_switch_deco_2(timer_switch)
 
 
-def draw_timer_switch_deco_1(timer_switch):
-    timer_switch_block_fancy_b.clone().setposition(timer_switch[0], timer_switch[1] - 20)
+def draw_blue_timer_switch_deco_1(timer_switch):
+    blue_timer_switch_block_fancy_b.clone().setposition(timer_switch[0], timer_switch[1] - 20)
 
 
-def draw_timer_switch_deco_2(timer_switch):
-    timer_switch_block_fancy_c.clone().setposition(timer_switch[0], timer_switch[1] - 12)
+def draw_blue_timer_switch_deco_2(timer_switch):
+    blue_timer_switch_block_fancy_c.clone().setposition(timer_switch[0], timer_switch[1] - 12)
 
 
-def draw_timer_switch_progress(percent, timer_switch):
-    c = timer_progress_block.clone()  # Must be done in main
+def draw_blue_timer_switch_progress(percent, timer_switch):
+    c = blue_timer_progress_block.clone()  # Must be done in main
+    c.shapesize(percent / 100)
+    c.setposition(timer_switch[0], timer_switch[1] - 20)
+
+
+def draw_red_timer_switch(timer_switch):
+    red_timer_switch_block.clone().setposition(timer_switch[0], timer_switch[1] - 5)
+    red_timer_switch_block_fancy_a.clone().setposition(timer_switch[0], timer_switch[1] - 7)
+    draw_red_timer_switch_deco_1(timer_switch)
+    draw_red_timer_switch_deco_2(timer_switch)
+
+
+def draw_red_timer_switch_deco_1(timer_switch):
+    red_timer_switch_block_fancy_b.clone().setposition(timer_switch[0], timer_switch[1] - 20)
+
+
+def draw_red_timer_switch_deco_2(timer_switch):
+    red_timer_switch_block_fancy_c.clone().setposition(timer_switch[0], timer_switch[1] - 12)
+
+
+def draw_red_timer_switch_progress(percent, timer_switch):
+    c = red_timer_progress_block.clone()  # Must be done in main
     c.shapesize(percent / 100)
     c.setposition(timer_switch[0], timer_switch[1] - 20)
 

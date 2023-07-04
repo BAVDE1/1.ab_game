@@ -120,23 +120,37 @@ red_switch_block_fancy.color("dark red")
 
 # Timer switch
 blue_timer_switch_char = '"'
-timer_switch_block = blue_switch_block.clone()
-timer_progress_block = base_block.clone()
-timer_progress_block.setposition(600, 600)
-timer_progress_block.color("cyan")
+blue_timer_switch_block = blue_switch_block.clone()
+blue_timer_progress_block = base_block.clone()
+blue_timer_progress_block.setposition(600, 600)
+blue_timer_progress_block.color("cyan")
 
-timer_switch_block_fancy_a = timer_switch_block.clone()
-timer_switch_block_fancy_a.shapesize(.5)
-timer_switch_block_fancy_a.color("cyan4")
+blue_timer_switch_block_fancy_a = blue_timer_switch_block.clone()
+blue_timer_switch_block_fancy_a.shapesize(.5)
+blue_timer_switch_block_fancy_a.color("cyan4")
 
-timer_switch_block_fancy_b = timer_switch_block.clone()
-timer_switch_block_fancy_b.color("cyan", "white")
-timer_switch_block_fancy_b.shape("square")
+blue_timer_switch_block_fancy_b = blue_timer_switch_block.clone()
+blue_timer_switch_block_fancy_b.color("cyan", "white")
+blue_timer_switch_block_fancy_b.shape("square")
 
-timer_switch_block_fancy_c = timer_switch_block.clone()
-timer_switch_block_fancy_c.shapesize(.5)
-timer_switch_block_fancy_c.color("cyan4")
-timer_switch_block_fancy_c.tilt(180)
+blue_timer_switch_block_fancy_c = blue_timer_switch_block.clone()
+blue_timer_switch_block_fancy_c.shapesize(.5)
+blue_timer_switch_block_fancy_c.color("cyan4")
+blue_timer_switch_block_fancy_c.tilt(180)
+
+red_timer_switch_char = "'"
+red_timer_switch_block = red_switch_block.clone()
+red_timer_progress_block = blue_timer_progress_block.clone()
+red_timer_progress_block.color("red")
+
+red_timer_switch_block_fancy_a = blue_timer_switch_block_fancy_a.clone()
+red_timer_switch_block_fancy_a.color("dark red")
+
+red_timer_switch_block_fancy_b = blue_timer_switch_block_fancy_b.clone()
+red_timer_switch_block_fancy_b.color("red", "white")
+
+red_timer_switch_block_fancy_c = blue_timer_switch_block_fancy_c.clone()
+red_timer_switch_block_fancy_c.color("dark red")
 
 # Teleporter
 tp_block_blue = base_circle.clone()

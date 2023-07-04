@@ -26,6 +26,7 @@ green_interaction_indicator = green_interaction_indicator_base.clone()
 red_interaction_indicator = red_interaction_indicator_base.clone()
 
 
+# reset one time textures
 def reset_ot_textures():
     global player
     global active_lift
@@ -60,7 +61,8 @@ player_falling = False
 player_moving = False
 player_teleporting = False
 switching_teleporters = False
-timer_enabled = False
+blue_timer_enabled = False
+red_timer_enabled = False
 
 # Lists
 lines = []
@@ -122,6 +124,7 @@ def read_level(level_to_load):
 # Times=0: base level drawn and base tp points saved, times=1: first tp points saved, times=2: second tp points saved, teleporters drawn and timers drawn
 def draw_level(times):
     global blue_timer_switch
+    global red_timer_switch
 
     if lines:
         line_num = 0
@@ -161,6 +164,8 @@ def draw_level(times):
                         all_red_switch_pos.append([pos_x, pos_y])
                     elif char == blue_timer_switch_char:
                         blue_timer_switch = [pos_x, pos_y]
+                    elif char == red_timer_switch_char:
+                        red_timer_switch = [pos_x, pos_y]
                     elif char == winpad_char:
                         draw_green_door(pos_x, pos_y)
                         draw_green_door_star(pos_x, pos_y)
@@ -171,7 +176,7 @@ def draw_level(times):
                     elif char == player_char:
                         draw_player(pos_x, pos_y)
 
-                # Teleporters
+                # Blue teleporters
                 for base_tp_char in blue_tp_base_char:
                     if char == base_tp_char and times == 0:
                         # add to list, render after level has been drawn
@@ -206,6 +211,11 @@ def draw_level(times):
                 raise ValueError("Only one blue timer switch is allowed!")
             elif len(blue_timer_switch) == 2:
                 draw_blue_timer_switch(blue_timer_switch)
+
+            if len(red_timer_switch) > 2:
+                raise ValueError("Only one red timer switch is allowed!")
+            elif len(red_timer_switch) == 2:
+                draw_red_timer_switch(red_timer_switch)
 
             # Level selectors
             if current_file == "lobby":
@@ -285,8 +295,7 @@ def check_for_platform():
     for platform_pos in all_platform_pos:
         if platform_pos[0] == player.xcor() and platform_pos[1] + 20 == player.ycor():
             needs_to_lift = False
-    if needs_to_lift:
-        lift_interact()
+    return needs_to_lift
 
 
 def check_for_wall(is_going_right):
@@ -303,7 +312,7 @@ def check_for_wall(is_going_right):
 ######################
 # ----Interaction----#
 ######################
-def interact():
+def interact(x=0, y=0):
     if not player_falling and not player_moving and not player_teleporting and not drawing:
         # Lift
         for lift_pos in all_lift_pos:
@@ -323,9 +332,13 @@ def interact():
             if player.xcor() == switch_pos[0] and player.ycor() == switch_pos[1] and not switching_teleporters:
                 switch_interact(False)
 
-        # Timer switch
-        if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not timer_enabled:
-            threading.Thread(target=timer_switch_interact).start()
+        # Blue timer switch
+        if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not blue_timer_enabled:
+            threading.Thread(target=blue_timer_switch_interact).start()
+
+        # Red timer switch
+        if len(red_timer_switch) == 2 and player.xcor() == red_timer_switch[0] and player.ycor() == red_timer_switch[1] and not red_timer_enabled:
+            threading.Thread(target=red_timer_switch_interact).start()
 
         # Blue teleporter
         for tp_list in all_blue_tp:
@@ -353,9 +366,20 @@ def lift_interact():
     global player_teleporting
     player_teleporting = True
 
+    # Save y positions of all platforms directly above lift
+    platforms_above = []
+    for platform_pos in all_platform_pos:
+        if platform_pos[0] == player.xcor() and platform_pos[1] > player.ycor():
+            platforms_above.append(platform_pos[1])
+
+    # Save the y pos of the nearest platform above lift
+    go_up_to = platforms_above[len(platforms_above) - 1]
+
     threading.Thread(target=lift_thread_a).start()
     player.setposition(player.xcor(), player.ycor() + 20)
-    check_for_platform()
+    if check_for_platform():
+        lift_interact()
+        return None
     active_lift.speed(0)
     active_lift.setposition(500, 570)
 
@@ -371,10 +395,12 @@ def switch_interact(is_blue):
     global switching_teleporters
     switching_teleporters = True
     wind.delay(load_wind_delay)
+
     if is_blue:
         all_tp_list = all_blue_tp
     else:
         all_tp_list = all_red_tp
+
     for tp_list in all_tp_list:
         if tp_list:
             base_pos = tp_list[0]
@@ -396,19 +422,43 @@ def switch_interact(is_blue):
     switching_teleporters = False
 
 
-def timer_switch_interact():
-    global timer_enabled
-    timer_enabled = True
+def blue_timer_switch_interact():
+    global blue_timer_enabled
+
+    blue_timer_enabled = True
     time_pressed = time.time()
     timer_sec = 10
+
     while time.time() - time_pressed < timer_sec:
         time.sleep(0.2)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
-        draw_timer_switch_progress(timer_percent, blue_timer_switch)
-    switch_interact()
-    timer_enabled = False
-    draw_timer_switch_deco_1(blue_timer_switch)
-    draw_timer_switch_deco_2(blue_timer_switch)
+        draw_blue_timer_switch_progress(timer_percent, blue_timer_switch)
+
+    switch_interact(True)
+    blue_timer_enabled = False
+
+    draw_blue_timer_switch_deco_1(blue_timer_switch)
+    draw_blue_timer_switch_deco_2(blue_timer_switch)
+    check_for_interact_able()
+
+
+def red_timer_switch_interact():
+    global red_timer_enabled
+
+    red_timer_enabled = True
+    time_pressed = time.time()
+    timer_sec = 10
+
+    while time.time() - time_pressed < timer_sec:
+        time.sleep(0.2)
+        timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
+        draw_red_timer_switch_progress(timer_percent, red_timer_switch)
+
+    switch_interact(False)
+    red_timer_enabled = False
+
+    draw_red_timer_switch_deco_1(red_timer_switch)
+    draw_red_timer_switch_deco_2(red_timer_switch)
     check_for_interact_able()
 
 
@@ -463,9 +513,14 @@ def check_for_interact_able():
             red_interaction_indicator.setposition(switch_pos[0], switch_pos[1] + 30)
             return None
 
-    # Timer switch
-    if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not timer_enabled:
+    # Blue timer switch
+    if len(blue_timer_switch) == 2 and player.xcor() == blue_timer_switch[0] and player.ycor() == blue_timer_switch[1] and not blue_timer_enabled:
         interact_indicator.setposition(blue_timer_switch[0], blue_timer_switch[1] + 30)
+        return None
+
+    # Red timer switch
+    if len(red_timer_switch) == 2 and player.xcor() == red_timer_switch[0] and player.ycor() == red_timer_switch[1] and not red_timer_enabled:
+        red_interaction_indicator.setposition(red_timer_switch[0], red_timer_switch[1] + 30)
         return None
 
     # blue teleporter
@@ -574,6 +629,7 @@ def setup_listeners():
     wind.onkeypress(interact, interact_key[2])
     wind.onkeypress(interact, interact_key[3])
     wind.onkeypress(interact, interact_key[4])
+    wind.onclick(interact)
     wind.onkeypress(escape, escape_key[0])
     wind.onkeypress(escape, escape_key[1])
 
