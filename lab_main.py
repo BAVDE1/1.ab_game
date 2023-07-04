@@ -20,7 +20,7 @@ wind = turtle.Screen()
 
 # One time textures (must be in main)
 player = turtle.Turtle()
-active_lift = platform_block.clone()
+active_lift = lift_block_a.clone()
 interact_indicator = interact_indicator_base.clone()
 green_interaction_indicator = green_interaction_indicator_base.clone()
 red_interaction_indicator = red_interaction_indicator_base.clone()
@@ -35,7 +35,7 @@ def reset_ot_textures():
     global red_interaction_indicator
 
     player = player_base.clone()
-    active_lift = platform_block.clone()
+    active_lift = lift_block_a.clone()
     interact_indicator = interact_indicator_base.clone()
     green_interaction_indicator = green_interaction_indicator_base.clone()
     red_interaction_indicator = red_interaction_indicator_base.clone()
@@ -319,7 +319,6 @@ def interact(x=0, y=0):
             if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
                 active_lift.setposition(player.xcor(), player.ycor() - 16)
                 active_lift.shape("rectangle")
-                active_lift.speed(1)
                 lift_interact()
 
         # Blue switch
@@ -375,7 +374,8 @@ def lift_interact():
     # Save the y pos of the nearest platform above lift
     go_up_to = platforms_above[len(platforms_above) - 1]
 
-    threading.Thread(target=lift_thread_platform(go_up_to)).start()
+    active_lift.speed(1)
+    active_lift.setposition(player.xcor(), go_up_to + 4)
     player.setposition(player.xcor(), go_up_to + 20)
 
     # After lift use
@@ -384,10 +384,6 @@ def lift_interact():
 
     player_teleporting = False
     check_for_interact_able()
-
-
-def lift_thread_platform(go_up_to):
-    active_lift.setposition(player.xcor(), go_up_to + 4)
 
 
 def switch_interact(is_blue):
@@ -429,7 +425,7 @@ def blue_timer_switch_interact():
     timer_sec = 10
 
     while time.time() - time_pressed < timer_sec:
-        time.sleep(0.2)
+        time.sleep(0.5)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
         draw_blue_timer_switch_progress(timer_percent, blue_timer_switch)
 
@@ -449,7 +445,7 @@ def red_timer_switch_interact():
     timer_sec = 10
 
     while time.time() - time_pressed < timer_sec:
-        time.sleep(0.2)
+        time.sleep(0.5)
         timer_percent = ((time.time() - time_pressed) / timer_sec) * 100
         draw_red_timer_switch_progress(timer_percent, red_timer_switch)
 
