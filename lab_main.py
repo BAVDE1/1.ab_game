@@ -375,11 +375,10 @@ def lift_interact():
     # Save the y pos of the nearest platform above lift
     go_up_to = platforms_above[len(platforms_above) - 1]
 
-    threading.Thread(target=lift_thread_a).start()
-    player.setposition(player.xcor(), player.ycor() + 20)
-    if check_for_platform():
-        lift_interact()
-        return None
+    threading.Thread(target=lift_thread_platform(go_up_to)).start()
+    player.setposition(player.xcor(), go_up_to + 20)
+
+    # After lift use
     active_lift.speed(0)
     active_lift.setposition(500, 570)
 
@@ -387,8 +386,8 @@ def lift_interact():
     check_for_interact_able()
 
 
-def lift_thread_a():
-    active_lift.setposition(player.xcor(), player.ycor() + 4)
+def lift_thread_platform(go_up_to):
+    active_lift.setposition(player.xcor(), go_up_to + 4)
 
 
 def switch_interact(is_blue):

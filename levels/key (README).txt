@@ -1,4 +1,4 @@
-NOTE: levels are free to be changed, but avoid touching the lobby, or at least not the level selectors in the lobby
+NOTE: levels are free to be changed, but avoid touching the lobby, or at least not the level selectors in the lobby. DO NOT remove OR add files to the 'levels' directory
 
 Normal blocks:
 # = normal block

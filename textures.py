@@ -40,12 +40,12 @@ ground_block.color("white")
 dark_grey_char = "."
 dark_grey_block = base_block.clone()
 dark_grey_block.setposition(540, 500)
-dark_grey_block.color("grey2")
+dark_grey_block.color("grey5")
 
 grey_char = ":"
 grey_block = base_block.clone()
 grey_block.setposition(520, 500)
-grey_block.color("grey5")
+grey_block.color("grey10")
 
 fancy_ground_char = "*"
 fancy_block = base_block.clone()
