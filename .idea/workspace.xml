@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="started red teleporter add-ability">
-      <change beforePath="$PROJECT_DIR$/.idea/1.ab_game.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/1.ab_game.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="performance improved timer switches, lvl 4 updated">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/levels/4.txt" beforeDir="false" afterPath="$PROJECT_DIR$/levels/4.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/save.txt" beforeDir="false" afterPath="$PROJECT_DIR$/save.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1688334517983</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="performance improved timer switches, lvl 4 updated">
+      <option name="closed" value="true" />
+      <created>1688464330968</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1688464330968</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -228,6 +235,7 @@
     <MESSAGE value="added comments" />
     <MESSAGE value="made level 3, fixed lift clarity" />
     <MESSAGE value="started red teleporter add-ability" />
-    <option name="LAST_COMMIT_MESSAGE" value="started red teleporter add-ability" />
+    <MESSAGE value="performance improved timer switches, lvl 4 updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="performance improved timer switches, lvl 4 updated" />
   </component>
 </project>

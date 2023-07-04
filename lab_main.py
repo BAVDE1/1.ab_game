@@ -273,29 +273,19 @@ def draw_red_teleporters():
 # ----Collision & Gravity----#
 ##############################
 def check_for_ground():
-    needs_to_fall = True
     for block_pos in all_block_pos:
         if block_pos[0] - 19 < player.xcor() < block_pos[0] + 19:
             if block_pos[1] + 20 == player.ycor():
-                needs_to_fall = False
-    if needs_to_fall:
-        fall()
+                return False
+    return True
 
 
-def fall():
+def can_fall():
     global player_falling
-    player_falling = True
-    player.sety(player.ycor() - 20)
-    check_for_ground()
+    while check_for_ground():
+        player_falling = True
+        player.sety(player.ycor() - 20)
     player_falling = False
-
-
-def check_for_platform():
-    needs_to_lift = True
-    for platform_pos in all_platform_pos:
-        if platform_pos[0] == player.xcor() and platform_pos[1] + 20 == player.ycor():
-            needs_to_lift = False
-    return needs_to_lift
 
 
 def check_for_wall(is_going_right):
@@ -374,12 +364,10 @@ def lift_interact():
     # Save the y pos of the nearest platform above lift
     go_up_to = platforms_above[len(platforms_above) - 1]
 
-    active_lift.speed(1)
     active_lift.setposition(player.xcor(), go_up_to + 4)
     player.setposition(player.xcor(), go_up_to + 20)
 
     # After lift use
-    active_lift.speed(0)
     active_lift.setposition(500, 570)
 
     player_teleporting = False
@@ -474,7 +462,7 @@ def teleporter_interact(tp_list):
         # Pos > base
         tp_player_to(base_pos[0], base_pos[1])
 
-    check_for_ground()
+    can_fall()
     check_for_interact_able()
 
 
@@ -587,7 +575,7 @@ def left():
             False):
         player_moving = True
         player.setx(player.xcor() - 20)
-        check_for_ground()
+        can_fall()
         check_for_interact_able()
         player_moving = False
 
@@ -598,7 +586,7 @@ def right():
             True):
         player_moving = True
         player.setx(player.xcor() + 20)
-        check_for_ground()
+        can_fall()
         check_for_interact_able()
         player_moving = False
 
@@ -652,7 +640,7 @@ def load_level(level_to_load):
 
     # init check for ground
     print("Checking for ground")
-    check_for_ground()
+    can_fall()
 
     print("Initialisation complete")
 
