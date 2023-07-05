@@ -289,14 +289,13 @@ def can_fall():
 
 
 def check_for_wall(is_going_right):
-    can_move = True
     for block_pos in all_block_pos:
         if block_pos[1] == player.ycor():
             if is_going_right and block_pos[0] - 20 == player.xcor():
-                can_move = False
+                return False
             elif not is_going_right and block_pos[0] + 20 == player.xcor():
-                can_move = False
-    return can_move
+                return False
+    return True
 
 
 ######################
