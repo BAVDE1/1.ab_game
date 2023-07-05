@@ -709,6 +709,6 @@ def unload_level():
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("5")
+    load_level("lobby")
 
 wind.mainloop()
