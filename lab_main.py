@@ -272,7 +272,7 @@ def draw_red_teleporters():
 ##############################
 # ----Collision & Gravity----#
 ##############################
-def check_for_ground():
+def is_not_on_ground():
     for block_pos in all_block_pos:
         if block_pos[0] - 19 < player.xcor() < block_pos[0] + 19:
             if block_pos[1] + 20 == player.ycor():
@@ -282,7 +282,7 @@ def check_for_ground():
 
 def can_fall():
     global player_falling
-    while check_for_ground():
+    while is_not_on_ground():
         player_falling = True
         player.sety(player.ycor() - 20)
     player_falling = False
@@ -700,6 +700,6 @@ def unload_level():
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("4")
+    load_level("5")
 
 wind.mainloop()
