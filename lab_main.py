@@ -569,6 +569,14 @@ interact_key = ["space", "z", "m", "Z", "M"]
 escape_key = ["Escape", "Delete"]
 
 
+# Uses right and left side of screen to determine a left or light movement
+def mouse_move(x, y):
+    if x <= 0:
+        left()
+    else:
+        right()
+
+
 def left():
     global player_moving
     if not player_falling and not player_moving and not player_teleporting and not switching_teleporters and not drawing and check_for_wall(
@@ -594,7 +602,7 @@ def right():
 def escape():
     if not current_file == "lobby" and not drawing and not player_falling and not player_moving and not player_teleporting and not switching_teleporters:
         go_to_level("lobby")
-    elif current_file == "lobby":
+    elif current_file == "lobby" and not drawing:
         print("Exiting game")
         wind.bye()
 
@@ -613,6 +621,7 @@ def setup_listeners():
     wind.onkeypress(interact, interact_key[3])
     wind.onkeypress(interact, interact_key[4])
     wind.onclick(interact)
+    wind.onclick(mouse_move, 3)
     wind.onkeypress(escape, escape_key[0])
     wind.onkeypress(escape, escape_key[1])
 

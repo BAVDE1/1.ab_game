@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="level 5 progress">
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="level 5 gameplay done">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/levels/5.txt" beforeDir="false" afterPath="$PROJECT_DIR$/levels/5.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -226,7 +227,15 @@
       <option name="project" value="LOCAL" />
       <updated>1688526087834</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="level 5 gameplay done">
+      <option name="closed" value="true" />
+      <created>1688529809129</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1688529809129</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -249,6 +258,7 @@
     <MESSAGE value="added red tp and switch functionality" />
     <MESSAGE value="added red timed switch" />
     <MESSAGE value="level 5 progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="level 5 progress" />
+    <MESSAGE value="level 5 gameplay done" />
+    <option name="LAST_COMMIT_MESSAGE" value="level 5 gameplay done" />
   </component>
 </project>
