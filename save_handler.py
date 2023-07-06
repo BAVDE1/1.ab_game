@@ -3,6 +3,7 @@ import os
 
 save_file = "save.txt"
 sv_lines = []
+
 num_of_levels = len(os.listdir("levels")) - 3
 
 

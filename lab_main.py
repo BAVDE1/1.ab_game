@@ -76,23 +76,28 @@ red_timer_switch = []  # Only one pair of pos entry allowed
 winpad_pos = []
 
 # Tp lists
-blue_tp_base_char = ["1", "2", "3", "4", "5"]
-red_tp_base_char = ["6", "7", "8", "9"]
+blue_tp_base_char = ["0", "1", "2", "3", "4"]
+red_tp_base_char = ["5", "6", "7", "8", "9"]
+
 blue_tp_first_char = ["a", "c", "e", "g", "i"]
-red_tp_first_char = ["k", "m", "o", "q"]
+red_tp_first_char = ["k", "m", "o", "q", "s"]
+
 blue_tp_second_char = ["b", "d", "f", "h", "j"]
-red_tp_second_char = ["l", "n", "p", "r"]
+red_tp_second_char = ["l", "n", "p", "r", "t"]
+
+blue_tp_0 = []
 blue_tp_1 = []
 blue_tp_2 = []
 blue_tp_3 = []
 blue_tp_4 = []
-blue_tp_5 = []
+red_tp_5 = []
 red_tp_6 = []
 red_tp_7 = []
 red_tp_8 = []
 red_tp_9 = []
-all_blue_tp = [blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4, blue_tp_5]
-all_red_tp = [red_tp_6, red_tp_7, red_tp_8, red_tp_9]
+
+all_blue_tp = [blue_tp_0, blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4]
+all_red_tp = [red_tp_5, red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
 # Level select pos (only in lobby), Order: [xcor, ycor, level number]
 all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [100, -360, 4], [0.0, -360, 5], [-100, -360, 6]]
@@ -169,6 +174,8 @@ def draw_level(times):
                     elif char == winpad_char:
                         draw_green_door(pos_x, pos_y)
                         draw_green_door_star(pos_x, pos_y)
+
+                        # check there is only one winpad in level
                         if not len(winpad_pos) > 2:
                             winpad_pos.append([pos_x, pos_y])
                         else:
@@ -180,7 +187,7 @@ def draw_level(times):
                 for base_tp_char in blue_tp_base_char:
                     if char == base_tp_char and times == 0:
                         # add to list, render after level has been drawn
-                        all_blue_tp[int(char) - 1].insert(0, [pos_x, pos_y])
+                        all_blue_tp[int(char)].insert(0, [pos_x, pos_y])
 
                 for first_tp_char in blue_tp_first_char:
                     if char == first_tp_char and times == 1:
@@ -193,7 +200,7 @@ def draw_level(times):
                 # Red teleporters
                 for base_tp_char in red_tp_base_char:
                     if char == base_tp_char and times == 0:
-                        all_red_tp[int(char) - 6].insert(0, [pos_x, pos_y])
+                        all_red_tp[int(char) - 5].insert(0, [pos_x, pos_y])
 
                 for first_tp_char in red_tp_first_char:
                     if char == first_tp_char and times == 1:
@@ -280,7 +287,7 @@ def is_not_on_ground():
     return True
 
 
-def can_fall():
+def should_fall():
     global player_falling
     while is_not_on_ground():
         player_falling = True
@@ -461,7 +468,7 @@ def teleporter_interact(tp_list):
         # Pos > base
         tp_player_to(base_pos[0], base_pos[1])
 
-    can_fall()
+    should_fall()
     check_for_interact_able()
 
 
@@ -582,7 +589,7 @@ def left():
             False):
         player_moving = True
         player.setx(player.xcor() - 20)
-        can_fall()
+        should_fall()
         check_for_interact_able()
         player_moving = False
 
@@ -593,7 +600,7 @@ def right():
             True):
         player_moving = True
         player.setx(player.xcor() + 20)
-        can_fall()
+        should_fall()
         check_for_interact_able()
         player_moving = False
 
@@ -606,6 +613,7 @@ def escape():
         wind.bye()
 
 
+# Key binds / controls
 def setup_listeners():
     wind.listen()
     wind.onkeypress(left, left_keys[0])
@@ -648,7 +656,7 @@ def load_level(level_to_load):
 
     # init check for ground
     print("Checking for ground")
-    can_fall()
+    should_fall()
 
     print("Initialisation complete")
 
@@ -677,20 +685,22 @@ def unload_level():
     red_timer_switch = []
     winpad_pos = []
 
+    global blue_tp_0
     global blue_tp_1
     global blue_tp_2
     global blue_tp_3
     global blue_tp_4
-    global blue_tp_5
+    global red_tp_5
     global red_tp_6
     global red_tp_7
     global red_tp_8
     global red_tp_9
+    blue_tp_0 = []
     blue_tp_1 = []
     blue_tp_2 = []
     blue_tp_3 = []
     blue_tp_4 = []
-    blue_tp_5 = []
+    red_tp_5 = []
     red_tp_6 = []
     red_tp_7 = []
     red_tp_8 = []
@@ -698,8 +708,8 @@ def unload_level():
 
     global all_blue_tp
     global all_red_tp
-    all_blue_tp = [blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4, blue_tp_5]
-    all_red_tp = [red_tp_6, red_tp_7, red_tp_8, red_tp_9]
+    all_blue_tp = [blue_tp_0, blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4]
+    all_red_tp = [red_tp_5, red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
     global current_file
     current_file = ""
