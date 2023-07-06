@@ -100,7 +100,7 @@ all_blue_tp = [blue_tp_0, blue_tp_1, blue_tp_2, blue_tp_3, blue_tp_4]
 all_red_tp = [red_tp_5, red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
 # Level select pos (only in lobby), Order: [xcor, ycor, level number]
-all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [100, -360, 4], [0.0, -360, 5], [-100, -360, 6]]
+all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [60, -360, 4], [-60, -360, 5]]
 
 
 ####################
