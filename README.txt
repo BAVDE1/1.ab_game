@@ -1,5 +1,12 @@
-NOTE: levels are free to be changed, but avoid touching the lobby, or at least not the level selectors in the lobby.
+NOTE: levels are free to be changed, but avoid touching the lobby, as the level selectors are hard coded.
 DO NOT remove OR add files to the 'levels' directory
+
+Controls:
+Move - wasd, arrow keys, mouse r-click
+Interact - space, z, m, mouse l-click
+Return to menu - esc, del
+Quit (only from menu) - esc, del
+
 
 Normal blocks:
 # = normal block
@@ -14,7 +21,7 @@ Interact-able blocks:
 = = lift (must be placed beneath a platform or another lift)
 ^ = BLUE switch
 ~ = RED switch
-" = BLUE timer switch (only one per level)
+" = BLUE timer switch (only one per level) (timer switches wait 10 seconds before switching)
 ' = RED timer switch (only one per level)
 
 Teleporters:
