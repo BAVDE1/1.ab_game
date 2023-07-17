@@ -1,4 +1,4 @@
-NOTE: levels are free to be changed, but avoid touching the lobby, as the level selectors are hard coded.
+NOTE: levels are free to be changed on your own fork, but take note to avoid touching the lobby, as the level selectors are hard coded.
 DO NOT remove OR add files to the 'levels' directory
 
 Controls:
