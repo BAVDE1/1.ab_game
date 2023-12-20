@@ -571,7 +571,7 @@ def check_for_interact_able():
 ###################
 left_keys = ["Left", "a", "A"]
 right_keys = ["Right", "d", "D"]
-interact_key = ["space", "z", "m", "Z", "M"]
+interact_key = ["space", "z", "m", "Z", "M", "Up"]
 escape_key = ["Escape", "Delete"]
 
 
@@ -627,6 +627,7 @@ def setup_listeners():
     wind.onkeypress(interact, interact_key[2])
     wind.onkeypress(interact, interact_key[3])
     wind.onkeypress(interact, interact_key[4])
+    wind.onkeypress(interact, interact_key[5])
     wind.onclick(interact)
     wind.onclick(mouse_move, 3)
     wind.onkeypress(escape, escape_key[0])
