@@ -71,6 +71,19 @@ green_door_block_b.color("lawn green")
 green_door_block_c = green_door_block_a.clone()
 green_door_block_c.color("lawn green")
 
+# Red door
+red_door_block = green_door_block.clone()
+red_door_block.color("red")
+
+red_door_block_a = green_door_block_a.clone()
+red_door_block_a.color("dark red")
+
+red_door_block_b = green_door_block_b.clone()
+red_door_block_b.color("red")
+
+red_door_block_c = green_door_block_c.clone()
+red_door_block_c.color("red")
+
 # Grey door
 grey_door_block = green_door_block.clone()
 grey_door_block.color("grey")

@@ -101,6 +101,7 @@ all_red_tp = [red_tp_5, red_tp_6, red_tp_7, red_tp_8, red_tp_9]
 
 # Level select pos (only in lobby), Order: [xcor, ycor, level number]
 all_base_lvl_sel_pos = [[-100, -240, 1], [0.0, -240, 2], [100, -240, 3], [60, -360, 4], [-60, -360, 5]]
+lvl_6_sel_pos = [0, 120]
 
 
 ####################
@@ -226,7 +227,7 @@ def draw_level(times):
 
             # Level selectors
             if current_file == "lobby":
-                draw_level_selectors(all_base_lvl_sel_pos)
+                draw_level_selectors(all_base_lvl_sel_pos, lvl_6_sel_pos)
 
             # Teleporters
             draw_blue_teleporters()
@@ -313,7 +314,6 @@ def interact(x=0, y=0):
         # Lift
         for lift_pos in all_lift_pos:
             if player.xcor() == lift_pos[0] and player.ycor() == lift_pos[1] + 20:
-                active_lift.setposition(player.xcor(), player.ycor() - 16)
                 active_lift.shape("rectangle")
                 lift_interact()
 
@@ -355,6 +355,10 @@ def interact(x=0, y=0):
         for base_lvl_sel_pos in all_base_lvl_sel_pos:
             if player.xcor() == base_lvl_sel_pos[0] and player.ycor() == base_lvl_sel_pos[1] and is_level_unlocked(base_lvl_sel_pos[2]) and current_file == "lobby":
                 go_to_level(str(base_lvl_sel_pos[2]))
+
+        # level 6
+        if player.xcor() == lvl_6_sel_pos[0] and player.ycor() == lvl_6_sel_pos[1] and is_level_unlocked(6) and current_file == "lobby":
+            go_to_level("6")
 
 
 def lift_interact():
@@ -560,6 +564,11 @@ def check_for_interact_able():
             green_interaction_indicator.setposition(base_lvl_sel_pos[0], base_lvl_sel_pos[1] + 40)
             return None
 
+    # Level select 6
+    if player.xcor() == lvl_6_sel_pos[0] and player.ycor() == lvl_6_sel_pos[1] and is_level_unlocked(6) and current_file == "lobby":
+        red_interaction_indicator.setposition(lvl_6_sel_pos[0], lvl_6_sel_pos[1] + 40)
+        return None
+
     # Moves indicator off-screen
     interact_indicator.setposition(500, 500)
     green_interaction_indicator.setposition(500, 500)
@@ -641,11 +650,14 @@ def go_to_level(level_to_load):
     unload_level()
     print("Unloaded level")
     screen_setup()
+    if level_to_load == "lobby" and is_level_complete(5):
+        load_level(level_to_load, True)
+        return None
     load_level(level_to_load)
 
 
 # Use go_to_level to load levels, not this
-def load_level(level_to_load):
+def load_level(level_to_load, alt=False):
     global current_file
     current_file = level_to_load
 
@@ -653,6 +665,8 @@ def load_level(level_to_load):
 
     # draw level
     print("Reading level")
+    if alt:
+        level_to_load = f"{level_to_load}_alt"
     read_level(level_to_load)
 
     # init check for ground
@@ -719,6 +733,6 @@ def unload_level():
 if __name__ == '__main__':
     print("Initialising")
     read_save_file()
-    load_level("lobby")
+    go_to_level("lobby")
 
 wind.mainloop()
