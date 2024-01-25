@@ -1,34 +1,20 @@
-import os.path
-from pprint import pprint
+from blocks import BaseBlock, FancyBlock
+from constants import *
 
-import pygame as pg
 
-block = pg.Surface(pg.Vector2(10, 10))
-block.fill((255, 255, 255))
-
-UNIT = 20
 CHAR_TO_BLOCK = {
-    '#': block
+    '#': BaseBlock,
+    '*': FancyBlock
 }
 
 
 def parse_level_file(level_name):
     file_name = 'levels/' + level_name.split('.')[0] + '.txt'
-    if not os.path.exists(file_name):
+    if not os.path.isfile(file_name):
         raise FileNotFoundError(f'Cannot find file {file_name}')
 
     with open(file_name) as fh:
         return fh.read().split('\n')
-
-
-class Block:
-    def __init__(self, pos, colour=pg.Color(255, 255, 255), size=pg.Vector2(UNIT, UNIT)):
-        self.pos: pg.Vector2 = pos
-        self.colour: pg.Color = colour
-        self.size: pg.Vector2 = size
-
-    def draw(self, screen):
-        pg.draw.rect(screen, self.colour, pg.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y))
 
 
 class Game:
@@ -38,17 +24,17 @@ class Game:
         self.clock = pg.time.Clock()
         self.keys = pg.key.get_pressed()
 
-        self.canvas_screen = pg.surface.Surface(pg.Vector2(400, 600))
+        self.canvas_screen = pg.surface.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.final_screen = pg.display.get_surface()
 
         self.current_level = 'lobby'
-        self.level_blocks = []
+        self.level_blocks: pg.sprite.Group = pg.sprite.Group()
 
         lobby = parse_level_file(self.current_level)
         for y, row in enumerate(lobby):
             for x, char in enumerate(row):
                 if char in CHAR_TO_BLOCK:
-                    self.level_blocks.append(Block(pg.Vector2(x, y), size=pg.Vector2(1, 1)))
+                    self.level_blocks.add(CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y))))
 
     def events(self):
         for event in pg.event.get():
@@ -66,11 +52,10 @@ class Game:
         self.canvas_screen.fill(fill_col)
 
         # RENDER HERE
-        for b in self.level_blocks:
-            b.draw(self.canvas_screen)
+        self.level_blocks.draw(self.canvas_screen)
 
         # FINAL RENDERING
-        scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(400, 600))
+        scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.final_screen.blit(scaled, pg.Vector2(0, 0))
 
         pg.display.flip()
@@ -85,9 +70,17 @@ class Game:
             pg.display.set_caption("{} - fps: {:.2f}".format("1.ab REMASTER", self.clock.get_fps()))
 
 
+def get_pos_from_relative(rel_pos: pg.Vector2) -> pg.Vector2:
+    return pg.Vector2((rel_pos.x * UNIT) + MARGIN, (rel_pos.y * UNIT) + MARGIN)
+
+
+def get_relative_from_pos(pos: pg.Vector2) -> pg.Vector2:
+    return pg.Vector2((pos.x - MARGIN) / UNIT, (pos.y - MARGIN) / UNIT)
+
+
 if __name__ == "__main__":
     pg.init()
-    pg.display.set_mode(pg.Vector2(400, 600))
+    pg.display.set_mode(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
 
     game = Game()
     game.main_loop()
