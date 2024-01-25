@@ -1,4 +1,34 @@
+import os.path
+from pprint import pprint
+
 import pygame as pg
+
+block = pg.Surface(pg.Vector2(10, 10))
+block.fill((255, 255, 255))
+
+UNIT = 20
+CHAR_TO_BLOCK = {
+    '#': block
+}
+
+
+def parse_level_file(level_name):
+    file_name = 'levels/' + level_name.split('.')[0] + '.txt'
+    if not os.path.exists(file_name):
+        raise FileNotFoundError(f'Cannot find file {file_name}')
+
+    with open(file_name) as fh:
+        return fh.read().split('\n')
+
+
+class Block:
+    def __init__(self, pos, colour=pg.Color(255, 255, 255), size=pg.Vector2(UNIT, UNIT)):
+        self.pos: pg.Vector2 = pos
+        self.colour: pg.Color = colour
+        self.size: pg.Vector2 = size
+
+    def draw(self, screen):
+        pg.draw.rect(screen, self.colour, pg.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y))
 
 
 class Game:
@@ -10,6 +40,15 @@ class Game:
 
         self.canvas_screen = pg.surface.Surface(pg.Vector2(400, 600))
         self.final_screen = pg.display.get_surface()
+
+        self.current_level = 'lobby'
+        self.level_blocks = []
+
+        lobby = parse_level_file(self.current_level)
+        for y, row in enumerate(lobby):
+            for x, char in enumerate(row):
+                if char in CHAR_TO_BLOCK:
+                    self.level_blocks.append(Block(pg.Vector2(x, y), size=pg.Vector2(1, 1)))
 
     def events(self):
         for event in pg.event.get():
@@ -26,6 +65,11 @@ class Game:
         self.final_screen.fill(fill_col)
         self.canvas_screen.fill(fill_col)
 
+        # RENDER HERE
+        for b in self.level_blocks:
+            b.draw(self.canvas_screen)
+
+        # FINAL RENDERING
         scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(400, 600))
         self.final_screen.blit(scaled, pg.Vector2(0, 0))
 
