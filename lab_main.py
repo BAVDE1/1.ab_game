@@ -1,15 +1,19 @@
-from blocks import BaseBlock, FancyBlock
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock
 from constants import *
 
 
 CHAR_TO_BLOCK = {
     '#': BaseBlock,
-    '*': FancyBlock
+    '*': FancyBlock,
+    '-': PlatformBlock,
+
+    ':': LightGreyBlock,
+    '.': GreyBlock,
 }
 
 
 def parse_level_file(level_name):
-    file_name = 'levels/' + level_name.split('.')[0] + '.txt'
+    file_name = 'files/' + level_name.split('.')[0] + '.txt'
     if not os.path.isfile(file_name):
         raise FileNotFoundError(f'Cannot find file {file_name}')
 
@@ -27,14 +31,10 @@ class Game:
         self.canvas_screen = pg.surface.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.final_screen = pg.display.get_surface()
 
-        self.current_level = 'lobby'
+        self.current_level = ''
         self.level_blocks: pg.sprite.Group = pg.sprite.Group()
 
-        lobby = parse_level_file(self.current_level)
-        for y, row in enumerate(lobby):
-            for x, char in enumerate(row):
-                if char in CHAR_TO_BLOCK:
-                    self.level_blocks.add(CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y))))
+        self.load_level('lobby')
 
     def events(self):
         for event in pg.event.get():
@@ -52,6 +52,7 @@ class Game:
         self.canvas_screen.fill(fill_col)
 
         # RENDER HERE
+        self.level_blocks.update()
         self.level_blocks.draw(self.canvas_screen)
 
         # FINAL RENDERING
@@ -59,6 +60,14 @@ class Game:
         self.final_screen.blit(scaled, pg.Vector2(0, 0))
 
         pg.display.flip()
+
+    def load_level(self, level_name):
+        self.current_level = level_name
+        level = parse_level_file(level_name)
+        for y, row in enumerate(level):
+            for x, char in enumerate(row):
+                if char in CHAR_TO_BLOCK:
+                    self.level_blocks.add(CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y))))
 
     def main_loop(self):
         while self.running:

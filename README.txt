@@ -11,9 +11,13 @@ Quit (only from menu) - esc, del
 Normal blocks:
 # = normal block
 * = fancy block
-: = grey block (non-collide-able)
-. = light grey block (non-collide-able)
 - = platform (top half of a normal block, is the only thing that can stop a lift, other than another lift)
+
+Details: (non-collide-able)
+g = random ground detail
+c = random ceiling detail
+: = light grey block
+. = grey block
 
 Interact-able blocks:
 | = level select (should never be changed or added to a level)
