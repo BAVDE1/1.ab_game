@@ -1,4 +1,4 @@
-from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, BgBlock
 from constants import *
 
 
@@ -32,6 +32,7 @@ class Game:
         self.final_screen = pg.display.get_surface()
 
         self.current_level = ''
+        self.bg_blocks: pg.sprite.Group = pg.sprite.Group()
         self.level_blocks: pg.sprite.Group = pg.sprite.Group()
 
         self.load_level('lobby')
@@ -52,7 +53,8 @@ class Game:
         self.canvas_screen.fill(fill_col)
 
         # RENDER HERE
-        self.level_blocks.update()
+        self.bg_blocks.update(mouse_pos=pg.mouse.get_pos())
+        self.bg_blocks.draw(self.canvas_screen)
         self.level_blocks.draw(self.canvas_screen)
 
         # FINAL RENDERING
@@ -67,6 +69,8 @@ class Game:
         for y, row in enumerate(level):
             for x, char in enumerate(row):
                 if char in CHAR_TO_BLOCK:
+                    if char in ('#', '*', '-'):
+                        BgBlock(get_pos_from_relative(pg.Vector2(x, y))).add(self.bg_blocks)
                     self.level_blocks.add(CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y))))
 
     def main_loop(self):

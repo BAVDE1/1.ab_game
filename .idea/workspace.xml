@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="remaster init">
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="refactoring local">
+      <change afterPath="$PROJECT_DIR$/files/b.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blocks.py" beforeDir="false" afterPath="$PROJECT_DIR$/blocks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,28 +47,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.lab_main.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.run_lab.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "1.ab__remaster",
-    "last_opened_file_path": "C:/Users/bryce/PycharmProjects/1.ab_game",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.lab_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_lab.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;1.ab__remaster&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/bryce/PycharmProjects/1.ab_game/files&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\bryce\PycharmProjects\1.ab_game\files" />
       <recent name="C:\Users\bryce\PycharmProjects\1.ab_game\levels" />
       <recent name="C:\Users\bryce\PycharmProjects\1.ab_game\sounds" />
       <recent name="C:\Users\bryce\PycharmProjects\1.ab_game" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\bryce\PycharmProjects\1.ab_game\sounds" />
       <recent name="C:\Users\bryce\PycharmProjects\1.ab_game" />
+      <recent name="C:\Users\bryce\PycharmProjects\1.ab_game\sounds" />
     </key>
   </component>
   <component name="RunManager">
@@ -244,7 +248,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705547635570</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="refactoring local">
+      <option name="closed" value="true" />
+      <created>1706267568719</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1706267568719</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -278,6 +290,7 @@
     <MESSAGE value="performance improved timer switches, lvl 4 updated" />
     <MESSAGE value="rm venv" />
     <MESSAGE value="remaster init" />
-    <option name="LAST_COMMIT_MESSAGE" value="remaster init" />
+    <MESSAGE value="refactoring local" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactoring local" />
   </component>
 </project>
