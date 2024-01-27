@@ -1,4 +1,4 @@
-from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, BgBlock
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock
 from constants import *
 
 
@@ -21,6 +21,30 @@ def parse_level_file(level_name):
         return fh.read().split('\n')
 
 
+class Cover:
+    def __init__(self):
+        self.pos: pg.Vector2 = pg.Vector2(0, 0)
+        self.cover_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
+        self.outline_group: pg.sprite.Group = pg.sprite.Group()
+
+    def add_outline_sprite(self, sprite: pg.sprite.Sprite):
+        sprite.add(self.outline_group)
+
+    def empty(self):
+        self.outline_group.empty()
+
+    def update(self):
+        self.pos = pg.Vector2(pg.mouse.get_pos()) / 2
+        self.outline_group.update(mouse_pos=pg.Vector2(pg.mouse.get_pos()), cover_pos=self.pos)
+
+    def draw(self, canvas_screen: pg.Surface):
+        self.update()
+
+        self.cover_surface.fill(BG_COL)
+        self.outline_group.draw(self.cover_surface)
+        canvas_screen.blit(self.cover_surface, self.pos)
+
+
 class Game:
     def __init__(self):
         self.running = True
@@ -32,10 +56,13 @@ class Game:
         self.final_screen = pg.display.get_surface()
 
         self.current_level = ''
-        self.bg_blocks: pg.sprite.Group = pg.sprite.Group()
-        self.level_blocks: pg.sprite.Group = pg.sprite.Group()
 
-        self.load_level('lobby')
+        self.cover: Cover = Cover()
+        self.bg_group: pg.sprite.Group = pg.sprite.Group()
+        self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
+        self.level_group: pg.sprite.Group = pg.sprite.Group()
+
+        self.load_splash_screen()
 
     def events(self):
         for event in pg.event.get():
@@ -48,14 +75,15 @@ class Game:
                 self.running = False
 
     def render(self):
-        fill_col = (0, 5, 5)
-        self.final_screen.fill(fill_col)
-        self.canvas_screen.fill(fill_col)
+        self.final_screen.fill(BG_COL)
+        self.canvas_screen.fill(BG_COL)
 
         # RENDER HERE
-        self.bg_blocks.update(mouse_pos=pg.mouse.get_pos())
-        self.bg_blocks.draw(self.canvas_screen)
-        self.level_blocks.draw(self.canvas_screen)
+        self.bg_group.draw(self.canvas_screen)
+        self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
+        self.level_group.draw(self.canvas_screen)
+
+        self.cover.draw(self.canvas_screen)
 
         # FINAL RENDERING
         scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
@@ -63,15 +91,31 @@ class Game:
 
         pg.display.flip()
 
-    def load_level(self, level_name):
-        self.current_level = level_name
+    def load_level(self, level_name, side_load=False):
         level = parse_level_file(level_name)
+        if not side_load:
+            self.clear_current_level()
+            self.current_level = level_name
+
         for y, row in enumerate(level):
             for x, char in enumerate(row):
                 if char in CHAR_TO_BLOCK:
                     if char in ('#', '*', '-'):
-                        BgBlock(get_pos_from_relative(pg.Vector2(x, y))).add(self.bg_blocks)
-                    self.level_blocks.add(CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y))))
+                        self.cover.add_outline_sprite(OutlineBlock(get_pos_from_relative(pg.Vector2(x, y))))
+
+                    sprite = CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y)))
+                    self.static_surface.blit(sprite.image, sprite.rect)
+
+    def load_splash_screen(self):
+        self.load_level('logo')
+        self.load_level('lobby', side_load=True)
+
+    def clear_current_level(self):
+        self.current_level = ''
+        self.bg_group.empty()
+        self.cover.empty()
+        self.static_surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
+        self.level_group.empty()
 
     def main_loop(self):
         while self.running:

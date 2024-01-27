@@ -63,25 +63,29 @@ class LightGreyBlock(BaseBlock):
         return pg.Color(c - 2, c, c - 2)
 
 
-class BgBlock(BaseBlock):
+class OutlineBlock(BaseBlock):
     def update(self, *args: Any, **kwargs: Any) -> None:
-        mouse_pos = kwargs['mouse_pos']
-        radius = UNIT / 2
-        vec = pg.Vector2(mouse_pos[0] - radius, mouse_pos[1] - radius) - self.og_pos
-        if vec.length() > 0:
-            self.pos = self.og_pos - (vec.normalize() * radius)
+        if 'cover_pos' in kwargs:
+            cover_pos: pg.Vector2 = kwargs['cover_pos']
+            self.pos = self.og_pos - cover_pos
+
+        if 'mouse_pos' in kwargs:
+            mouse_pos: pg.Vector2 = kwargs['mouse_pos']
+            radius = UNIT / 2
+            mid = UNIT / 2
+            vec = pg.Vector2(mouse_pos.x - mid, mouse_pos.y - mid) - self.og_pos
+            if vec.length() > 0:
+                self.pos = self.pos - (vec.normalize() * radius)
         return None
 
     @property
     def colour(self) -> pg.Color:
-        return pg.Color(8, 100, 8)
+        return pg.Color(8, 10, 8)
 
     @property
     def size(self) -> pg.Vector2:
         return pg.Vector2(25, 25)
 
     @property
-    def image(self) -> pg.Surface:
-        block = pg.Surface(self.size)
-        block.fill(self.colour)
-        return block
+    def rect(self) -> pg.Rect:
+        return pg.Rect(self.pos.x + ((UNIT - self.size.x) / 2), self.pos.y + ((UNIT - self.size.y) / 2), self.size.x, self.size.y)
