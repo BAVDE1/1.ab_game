@@ -71,11 +71,11 @@ class OutlineBlock(BaseBlock):
 
         if 'mouse_pos' in kwargs:
             mouse_pos: pg.Vector2 = kwargs['mouse_pos']
-            radius = UNIT / 2
+            radius = 4
             mid = UNIT / 2
             vec = pg.Vector2(mouse_pos.x - mid, mouse_pos.y - mid) - self.og_pos
             if vec.length() > 0:
-                self.pos = self.pos - (vec.normalize() * radius)
+                self.pos -= (vec.normalize() * radius)
         return None
 
     @property
@@ -89,3 +89,17 @@ class OutlineBlock(BaseBlock):
     @property
     def rect(self) -> pg.Rect:
         return pg.Rect(self.pos.x + ((UNIT - self.size.x) / 2), self.pos.y + ((UNIT - self.size.y) / 2), self.size.x, self.size.y)
+
+
+class LogoBlock(BaseBlock):
+    def __init__(self, pos: pg.Vector2, _image: pg.Surface):
+        super().__init__(pos)
+        self._image = _image
+
+    @property
+    def image(self) -> pg.Surface:
+        return self._image
+
+    @property
+    def rect(self) -> pg.Rect:
+        return pg.Rect(self.pos.x, self.pos.y, self.image.get_size()[0], self.image.get_size()[1])

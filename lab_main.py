@@ -10,6 +10,7 @@ CHAR_TO_BLOCK = {
     ':': LightGreyBlock,
     '.': GreyBlock,
 }
+OUTLINE_CHARS = ['#', '*', '-']
 
 
 def parse_level_file(level_name):
@@ -19,6 +20,18 @@ def parse_level_file(level_name):
 
     with open(file_name) as fh:
         return fh.read().split('\n')
+
+
+def enumerate_function(lines: list):
+    """
+    Calls function for each `character` of each row in the given `lines` list (matrix)\n
+    Function must have params `x`, `y`, and `char`
+    """
+    def enum_func(func):
+        for y, row in enumerate(lines):
+            for x, char in enumerate(row):
+                func(x, y, char)
+    return enum_func
 
 
 class Cover:
@@ -34,7 +47,6 @@ class Cover:
         self.outline_group.empty()
 
     def update(self):
-        self.pos = pg.Vector2(pg.mouse.get_pos()) / 2
         self.outline_group.update(mouse_pos=pg.Vector2(pg.mouse.get_pos()), cover_pos=self.pos)
 
     def draw(self, canvas_screen: pg.Surface):
@@ -43,6 +55,25 @@ class Cover:
         self.cover_surface.fill(BG_COL)
         self.outline_group.draw(self.cover_surface)
         canvas_screen.blit(self.cover_surface, self.pos)
+
+
+class Logo:
+    def __init__(self):
+        self.pos: pg.Vector2 = pg.Vector2()
+        self.group: pg.sprite.Group = pg.sprite.Group()
+
+    def create_logo(self):
+        with open('files/logo.txt') as fh:
+            parts = [line.split('\n') for line in fh.read().split('\\')]
+
+        for part in parts:
+            @enumerate_function(part)
+            def store(x, y, char):
+                pass
+
+    def draw(self, canvas_screen):
+        self.group.update()
+        self.group.draw(canvas_screen)
 
 
 class Game:
@@ -56,12 +87,16 @@ class Game:
         self.final_screen = pg.display.get_surface()
 
         self.current_level = ''
+        self.on_splash_screen = False
 
+        self.logo: Logo = Logo()
         self.cover: Cover = Cover()
+
         self.bg_group: pg.sprite.Group = pg.sprite.Group()
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
         self.level_group: pg.sprite.Group = pg.sprite.Group()
 
+        # self.load_level('lobby')
         self.load_splash_screen()
 
     def events(self):
@@ -83,6 +118,8 @@ class Game:
         self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
         self.level_group.draw(self.canvas_screen)
 
+        if not self.on_splash_screen:
+            self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1] / 2)
         self.cover.draw(self.canvas_screen)
 
         # FINAL RENDERING
@@ -97,17 +134,18 @@ class Game:
             self.clear_current_level()
             self.current_level = level_name
 
-        for y, row in enumerate(level):
-            for x, char in enumerate(row):
-                if char in CHAR_TO_BLOCK:
-                    if char in ('#', '*', '-'):
-                        self.cover.add_outline_sprite(OutlineBlock(get_pos_from_relative(pg.Vector2(x, y))))
+        @enumerate_function(level)
+        def store(x, y, char):
+            if char in OUTLINE_CHARS:
+                self.cover.add_outline_sprite(OutlineBlock(get_pos_from_relative(pg.Vector2(x, y))))
 
-                    sprite = CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y)))
-                    self.static_surface.blit(sprite.image, sprite.rect)
+            if char in CHAR_TO_BLOCK:
+                sprite = CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y)))
+                self.static_surface.blit(sprite.image, sprite.rect)
 
     def load_splash_screen(self):
-        self.load_level('logo')
+        self.on_splash_screen = True
+        self.logo.create_logo()
         self.load_level('lobby', side_load=True)
 
     def clear_current_level(self):
@@ -137,6 +175,7 @@ def get_relative_from_pos(pos: pg.Vector2) -> pg.Vector2:
 
 if __name__ == "__main__":
     pg.init()
+    pg.display.set_icon(pg.image.load('baller.png'))
     pg.display.set_mode(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
 
     game = Game()

@@ -7,6 +7,8 @@ from typing import Any
 
 import pygame as pg
 
+VERSION = '1.0.0'
+
 BG_COL = pg.Color(0, 5, 5)
 
 UNIT = 20
