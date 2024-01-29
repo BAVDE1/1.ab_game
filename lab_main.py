@@ -1,4 +1,4 @@
-from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock
 from constants import *
 
 
@@ -22,9 +22,9 @@ def parse_level_file(level_name):
         return fh.read().split('\n')
 
 
-def enumerate_function(lines: list):
+def enumerate_function(lines: list[str]):
     """
-    Calls function for each `character` of each row in the given `lines` list (matrix)\n
+    Calls function for each `character` of each `string` in the given list (matrix), returning `x` and `y` accordingly\n
     Function must have params `x`, `y`, and `char`
     """
     def enum_func(func):
@@ -66,10 +66,18 @@ class Logo:
         with open('files/logo.txt') as fh:
             parts = [line.split('\n') for line in fh.read().split('\\')]
 
-        for part in parts:
+        letter_positions = [[120, 120], [180, 120], [240, 120], [360, 120]]
+        for i, part in enumerate(parts):
+            image = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
+
             @enumerate_function(part)
             def store(x, y, char):
-                pass
+                if char in CHAR_TO_BLOCK:
+                    pos = get_pos_from_relative(pg.Vector2(x, y))
+                    block = CHAR_TO_BLOCK[char](pos)
+                    image.blit(block.image, pos)
+
+            LogoBlock(pg.Vector2(letter_positions[i]), image, i).add(self.group)
 
     def draw(self, canvas_screen):
         self.group.update()
@@ -119,8 +127,9 @@ class Game:
         self.level_group.draw(self.canvas_screen)
 
         if not self.on_splash_screen:
-            self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1] / 2)
+            self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1])
         self.cover.draw(self.canvas_screen)
+        self.logo.draw(self.canvas_screen)
 
         # FINAL RENDERING
         scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))

@@ -1,14 +1,20 @@
+import math
+
 from constants import *
 
 
 class BaseBlock(pg.sprite.Sprite):
     def __init__(self, pos: pg.Vector2):
         super().__init__()
-        self.og_pos: pg.Vector2 = pos
+        self._og_pos: pg.Vector2 = pos
         self.pos: pg.Vector2 = pos
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         return None
+
+    @property
+    def og_pos(self):
+        return self._og_pos
 
     @property
     def colour(self) -> pg.Color:
@@ -52,15 +58,13 @@ class PlatformBlock(BaseBlock):
 class GreyBlock(BaseBlock):
     @property
     def colour(self) -> pg.Color:
-        c = 10
-        return pg.Color(c - 2, c, c - 2)
+        return COL_GREY
 
 
 class LightGreyBlock(BaseBlock):
     @property
     def colour(self) -> pg.Color:
-        c = 18
-        return pg.Color(c - 2, c, c - 2)
+        return COL_LIGHT_GREY
 
 
 class OutlineBlock(BaseBlock):
@@ -80,11 +84,11 @@ class OutlineBlock(BaseBlock):
 
     @property
     def colour(self) -> pg.Color:
-        return pg.Color(8, 10, 8)
+        return COL_LIGHT_GREY
 
     @property
     def size(self) -> pg.Vector2:
-        return pg.Vector2(25, 25)
+        return pg.Vector2(25, 25) # unit*1.25
 
     @property
     def rect(self) -> pg.Rect:
@@ -92,9 +96,15 @@ class OutlineBlock(BaseBlock):
 
 
 class LogoBlock(BaseBlock):
-    def __init__(self, pos: pg.Vector2, _image: pg.Surface):
+    def __init__(self, pos: pg.Vector2, _image: pg.Surface, i: int):
         super().__init__(pos)
         self._image = _image
+        self._i = i
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.pos.y = self.og_pos.y + (0.2 * math.sin(2 * (time.time() - (1 + (self._i * 0.5)))))
+        # self.pos.y = self.og_pos.y + math.sin(self._i * time.time())
+        return None
 
     @property
     def image(self) -> pg.Surface:
