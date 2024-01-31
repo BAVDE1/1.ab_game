@@ -66,7 +66,7 @@ class Logo:
         with open('files/logo.txt') as fh:
             parts = [line.split('\n') for line in fh.read().split('\\')]
 
-        letter_positions = [[120, 120], [180, 120], [240, 120], [360, 120]]
+        letter_positions = [UNIT * 6, UNIT * 9, UNIT * 12, UNIT * 18]
         for i, part in enumerate(parts):
             image = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
 
@@ -77,7 +77,7 @@ class Logo:
                     block = CHAR_TO_BLOCK[char](pos)
                     image.blit(block.image, pos)
 
-            LogoBlock(pg.Vector2(letter_positions[i]), image, i).add(self.group)
+            LogoBlock(pg.Vector2(letter_positions[i], UNIT * 6), image, i).add(self.group)
 
     def draw(self, canvas_screen):
         self.group.update()

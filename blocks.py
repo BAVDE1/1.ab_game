@@ -45,7 +45,7 @@ class FancyBlock(BaseBlock):
         block.fill(self.colour)
         inside = pg.Surface(self.size * 0.5)
         inside.fill(pg.Color(0, 5, 5))
-        block.blit(inside, pg.Vector2(UNIT / 4, UNIT / 4))
+        block.blit(inside, pg.Vector2(UNIT * 0.25, UNIT * 0.25))
         return block
 
 
@@ -75,8 +75,8 @@ class OutlineBlock(BaseBlock):
 
         if 'mouse_pos' in kwargs:
             mouse_pos: pg.Vector2 = kwargs['mouse_pos']
-            radius = 4
-            mid = UNIT / 2
+            radius = UNIT * 0.25
+            mid = UNIT * 0.5
             vec = pg.Vector2(mouse_pos.x - mid, mouse_pos.y - mid) - self.og_pos
             if vec.length() > 0:
                 self.pos -= (vec.normalize() * radius)
@@ -88,7 +88,7 @@ class OutlineBlock(BaseBlock):
 
     @property
     def size(self) -> pg.Vector2:
-        return pg.Vector2(25, 25) # unit*1.25
+        return pg.Vector2(UNIT * 1.25, UNIT * 1.25)  # unit*1.25
 
     @property
     def rect(self) -> pg.Rect:
@@ -102,8 +102,11 @@ class LogoBlock(BaseBlock):
         self._i = i
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        self.pos.y = self.og_pos.y + (0.2 * math.sin(2 * (time.time() - (1 + (self._i * 0.5)))))
+        amp = UNIT * 0.1
+        freq = 1
+        # self.pos.y = self.og_pos.y + ((UNIT * 0.01) * math.sin(3 * (time.time() - (1 + (self._i * 0.5)))))
         # self.pos.y = self.og_pos.y + math.sin(self._i * time.time())
+        self.pos.y = self.og_pos.y + math.sin(time.time() * math.pi)
         return None
 
     @property
