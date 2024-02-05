@@ -7,7 +7,7 @@ from constants import *
 class BaseBlock(pg.sprite.Sprite):
     def __init__(self, pos: pg.Vector2):
         super().__init__()
-        self._og_pos: pg.Vector2 = pos
+        self._og_pos: pg.Vector2 = pg.Vector2(pos)
         self.pos: pg.Vector2 = pos
 
     def update(self, *args: Any, **kwargs: Any) -> None:
@@ -97,24 +97,16 @@ class OutlineBlock(BaseBlock):
 
 
 class LogoBlock(BaseBlock):
-    def __init__(self, pos: pg.Vector2, image: pg.Surface, i: int):
+    def __init__(self, pos: pg.Vector2, image: pg.Surface, i: int = 0):
         super().__init__(pos)
         self.spawn_time = time.time() + i
         self._image = image
-        self._i = i
-        print(self.og_pos)
-        self.og_pos.y += (self.og_pos.y * self.get_sin())
-        print(self.og_pos)
-
-    def get_sin(self):
-        amp = UNIT * 0.01
-        freq = 1
-        sine_time = time.time() - self.spawn_time
-        return amp * math.sin(freq * sine_time)
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        self.pos.y = self.og_pos.y + self.get_sin()
-        print(self.pos.y)
+        amp = UNIT * 0.4
+        freq = 1
+        sine_time = time.time() - self.spawn_time
+        self.pos.y = self.og_pos.y + (amp * math.sin(freq * sine_time))
         return None
 
     @property
