@@ -1,4 +1,5 @@
 import math
+import time
 
 from constants import *
 
@@ -98,15 +99,15 @@ class OutlineBlock(BaseBlock):
 class LogoBlock(BaseBlock):
     def __init__(self, pos: pg.Vector2, _image: pg.Surface, i: int):
         super().__init__(pos)
+        self.spawn_time = time.time()
         self._image = _image
         self._i = i
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        amp = UNIT * 0.1
+        amp = UNIT * 0.01
         freq = 1
-        # self.pos.y = self.og_pos.y + ((UNIT * 0.01) * math.sin(3 * (time.time() - (1 + (self._i * 0.5)))))
-        # self.pos.y = self.og_pos.y + math.sin(self._i * time.time())
-        self.pos.y = self.og_pos.y + math.sin(time.time() * math.pi)
+        sine_time = time.time() - self.spawn_time
+        self.pos.y = self.og_pos.y + (amp * math.sin(freq * sine_time))
         return None
 
     @property

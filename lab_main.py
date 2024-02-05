@@ -77,7 +77,7 @@ class Logo:
                     block = CHAR_TO_BLOCK[char](pos)
                     image.blit(block.image, pos)
 
-            LogoBlock(pg.Vector2(letter_positions[i], UNIT * 6), image, i).add(self.group)
+            LogoBlock(pg.Vector2(letter_positions[i], UNIT * 5), image, i).add(self.group)
 
     def draw(self, canvas_screen):
         self.group.update()
