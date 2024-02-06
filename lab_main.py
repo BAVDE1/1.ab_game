@@ -47,7 +47,8 @@ class Cover:
         self.outline_group.empty()
 
     def update(self):
-        self.outline_group.update(mouse_pos=pg.Vector2(pg.mouse.get_pos()), cover_pos=self.pos)
+        bulge_pos = [pg.mouse.get_pos()]
+        self.outline_group.update(bulge_positions=bulge_pos, cover_pos=self.pos)
 
     def draw(self, canvas_screen: pg.Surface):
         self.update()
@@ -80,7 +81,7 @@ class Logo:
             LogoBlock(pg.Vector2(letter_positions[i], UNIT * 6), image, i).add(self.group)
 
     def draw(self, canvas_screen):
-        self.group.update()
+        self.group.update(mouse_pos=pg.mouse.get_pos())
         self.group.draw(canvas_screen)
 
 

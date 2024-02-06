@@ -71,16 +71,18 @@ class LightGreyBlock(BaseBlock):
 class OutlineBlock(BaseBlock):
     def update(self, *args: Any, **kwargs: Any) -> None:
         if 'cover_pos' in kwargs:
-            cover_pos: pg.Vector2 = kwargs['cover_pos']
+            cover_pos = pg.Vector2(kwargs['cover_pos'])
             self.pos = self.og_pos - cover_pos
 
-        if 'mouse_pos' in kwargs:
-            mouse_pos: pg.Vector2 = kwargs['mouse_pos']
+        if 'bulge_positions' in kwargs:
+            bulge_positions = list(kwargs['bulge_positions'])
             radius = UNIT * 0.25
             mid = UNIT * 0.5
-            vec = pg.Vector2(mouse_pos.x - mid, mouse_pos.y - mid) - self.og_pos
-            if vec.length() > 0:
-                self.pos -= (vec.normalize() * radius)
+            for bulge_pos in bulge_positions:
+                bulge_pos = pg.Vector2(bulge_pos)
+                vec = pg.Vector2(bulge_pos.x - mid, bulge_pos.y - mid) - self.og_pos
+                if vec.length() > 0:
+                    self.pos -= (vec.normalize() * radius)
         return None
 
     @property
