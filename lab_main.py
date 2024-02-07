@@ -1,9 +1,14 @@
+import os.path
 import random
+import logging
+import datetime
 
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock
 from constants import *
+from save_handler import SaveHandler
 
 
+LOGGING_FOLDER = 'files/logs'
 CHAR_TO_BLOCK = {
     '#': BaseBlock,
     '*': FancyBlock,
@@ -13,6 +18,16 @@ CHAR_TO_BLOCK = {
     '.': GreyBlock,
 }
 OUTLINE_CHARS = ['#', '*', '-']
+
+
+def get_logger():
+    log_file = f'{LOGGING_FOLDER}/{datetime.datetime.now()}.log'
+    if not os.path.exists(LOGGING_FOLDER):
+        os.makedirs(LOGGING_FOLDER)
+    logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG,
+                        format='%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt='%m/%d/%Y %I:%M:%S')
+    logging.debug('created logger successfully')
+    return logging.getLogger(__name__)
 
 
 def parse_level_file(level_name):
@@ -54,7 +69,7 @@ class Cover:
     def update(self):
         # update bulge positions first
         for index, pos in enumerate(self.bulge_positions):
-            i = index + 1
+            i = index + 2
             amp = UNIT * (0.05 * i)
             sine_time = time.time() - (10 * i)
             self.bulge_positions[index] = pg.Vector2(pos.x + (amp * math.sin(sine_time + 10)), pos.y + (amp * math.sin(sine_time - 10)))
@@ -100,6 +115,9 @@ class Logo:
 
 class Game:
     def __init__(self):
+        self.logger = get_logger()
+        self.save_handler = SaveHandler(self.logger)
+
         self.running = True
         self.fps = 60
         self.clock = pg.time.Clock()
@@ -118,8 +136,8 @@ class Game:
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
         self.level_group: pg.sprite.Group = pg.sprite.Group()
 
-        # self.load_level('lobby')
-        self.load_splash_screen()
+        if self.save_handler.get_option('has_adjusted_brightness'):
+            self.load_splash_screen()
 
     def events(self):
         for event in pg.event.get():
@@ -129,6 +147,7 @@ class Game:
 
             # close game
             if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
+                self.logger.info('exiting program gracefully')
                 self.running = False
 
     def render(self):

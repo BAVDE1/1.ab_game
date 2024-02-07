@@ -1,64 +1,56 @@
-# import distutils.util
-# import os
-#
-# save_file = "save.txt"
-# sv_lines = []
-#
-# num_of_levels = len(os.listdir("levels")) - 4
-#
-#
-# def read_save_file():
-#     global sv_lines
-#
-#     with open(save_file) as sv:
-#         for line in sv:
-#             line = line.rstrip()
-#             line = line.replace(" ", "")
-#             line = line.replace("[", "")
-#             line = line.replace("]", "")
-#             sp = line.split(",")
-#             sv_lines.append([int(sp[0]), distutils.util.strtobool(sp[1])])
-#     check_integrity()
-#
-#
-# def is_level_complete(level_num):
-#     is_complete = False
-#     for level in sv_lines:
-#         if level[0] == level_num and level[1]:
-#             is_complete = True
-#     return is_complete
-#
-#
-# def is_level_unlocked(level_num):
-#     is_unlocked = False
-#     if level_num == 1 or is_level_complete(level_num - 1):
-#         is_unlocked = True
-#     return is_unlocked
-#
-#
-# def complete_level(level_num):
-#     for line in sv_lines:
-#         if line[0] == level_num:
-#             line[1] = 1
-#
-#     with open(save_file, "w") as sv:
-#         for line in sv_lines:
-#             sv.write("%s\n" % line)
-#
-#
-# def check_integrity():
-#     # Check level number, and append
-#     should_be_num = 0
-#     for line in sv_lines:
-#         should_be_num += 1
-#         if not line[0] == should_be_num:
-#             line[0] = should_be_num
-#             print("ERROR appended: changed to: ", should_be_num)
-#
-#     # Check amount of levels in list, and append
-#     if not len(sv_lines) == num_of_levels:
-#         needs = num_of_levels - len(sv_lines)
-#         for i in range(needs):
-#             needs = num_of_levels - len(sv_lines)
-#             sv_lines.append([num_of_levels - (needs - 1), 0])
-#             print("ERROR appended: added ", needs, " lines")
+import distutils.util
+import json
+import os
+import logging
+
+
+class SaveHandler:
+    def __init__(self, logger: logging.Logger):
+        self.logger = logger
+        self.default_save_data_file = 'files/default_save_data.json'
+        self.save_data_file = 'save_data.json'
+
+        if not os.path.exists(self.save_data_file):
+            self.create_save_file()
+
+        self.check_and_patch_integrity()
+
+    def check_and_patch_integrity(self):
+        with open(self.save_data_file, 'r') as fh:
+            current_data = json.load(fh)
+        with open(self.default_save_data_file, 'r') as default_data_file:
+            default_data = json.load(default_data_file)
+
+        for option in default_data:
+            if option not in current_data:
+                self.logger.warning(f"Option '{option}' not found in '{self.save_data_file}', adding.")
+                current_data[option] = default_data[option]
+                self.dump_data_into_save(current_data)
+
+            # inside option level
+            for sub_option in default_data[option]:
+                if sub_option not in current_data[option]:
+                    self.logger.warning(f"Sub-option '{sub_option}' not found in option '{option}' of '{self.save_data_file}', adding.")
+                    current_data[option][sub_option] = default_data[option][sub_option]
+                    self.dump_data_into_save(current_data)
+
+    def dump_data_into_save(self, data: dict):
+        with open(self.save_data_file, 'r+') as fh:
+            fh.truncate(0)
+            json.dump(data, fh, indent=4)
+
+    def create_save_file(self):
+        with open(self.save_data_file, 'w') as fh:  # creates
+            with open(self.default_save_data_file, 'r') as default_data:
+                self.logger.info("creating new save data file")
+                self.dump_data_into_save(json.load(default_data))
+
+    def get_option(self, option: str):
+        with open(self.save_data_file, 'r') as fh:
+            data = json.load(fh)
+            return data['options'][option]
+
+    def get_save(self, save_num: int):
+        with open(self.save_data_file, 'r') as fh:
+            data = json.load(fh)
+            return data['save'][save_num]

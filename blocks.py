@@ -76,7 +76,7 @@ class OutlineBlock(BaseBlock):
 
         if 'bulge_positions' in kwargs:
             bulge_positions = list(kwargs['bulge_positions'])
-            radius = UNIT * 0.1
+            radius = UNIT * 0.13
             half_unit = UNIT * 0.5
             for bulge_pos in bulge_positions:
                 bulge_pos = pg.Vector2(bulge_pos)
