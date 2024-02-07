@@ -1,3 +1,5 @@
+import random
+
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock
 from constants import *
 
@@ -40,6 +42,9 @@ class Cover:
         self.cover_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.outline_group: pg.sprite.Group = pg.sprite.Group()
 
+        # generates a bunch of random positions
+        self.bulge_positions = [pg.Vector2(random.randrange(0, SCRN_WIDTH), random.randrange(0, SCRN_HEIGHT)) for _ in range(3)]
+
     def add_outline_sprite(self, sprite: pg.sprite.Sprite):
         sprite.add(self.outline_group)
 
@@ -47,14 +52,22 @@ class Cover:
         self.outline_group.empty()
 
     def update(self):
-        bulge_pos = [pg.mouse.get_pos()]
-        self.outline_group.update(bulge_positions=bulge_pos, cover_pos=self.pos)
+        # update bulge positions first
+        for index, pos in enumerate(self.bulge_positions):
+            i = index + 1
+            amp = UNIT * (0.05 * i)
+            sine_time = time.time() - (10 * i)
+            self.bulge_positions[index] = pg.Vector2(pos.x + (amp * math.sin(sine_time + 10)), pos.y + (amp * math.sin(sine_time - 10)))
+        self.outline_group.update(bulge_positions=self.bulge_positions, cover_pos=self.pos)
 
     def draw(self, canvas_screen: pg.Surface):
         self.update()
 
         self.cover_surface.fill(BG_COL)
         self.outline_group.draw(self.cover_surface)
+        # for pos in self.bulge_positions:
+        #     pg.draw.rect(self.cover_surface, (255, 0, 0), pg.Rect(pos.x - self.pos.x, pos.y - self.pos.y, 5, 5))
+
         canvas_screen.blit(self.cover_surface, self.pos)
 
 

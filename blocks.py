@@ -76,11 +76,11 @@ class OutlineBlock(BaseBlock):
 
         if 'bulge_positions' in kwargs:
             bulge_positions = list(kwargs['bulge_positions'])
-            radius = UNIT * 0.25
-            mid = UNIT * 0.5
+            radius = UNIT * 0.1
+            half_unit = UNIT * 0.5
             for bulge_pos in bulge_positions:
                 bulge_pos = pg.Vector2(bulge_pos)
-                vec = pg.Vector2(bulge_pos.x - mid, bulge_pos.y - mid) - self.og_pos
+                vec = pg.Vector2(bulge_pos.x - half_unit, bulge_pos.y - half_unit) - self.og_pos
                 if vec.length() > 0:
                     self.pos -= (vec.normalize() * radius)
         return None
@@ -91,7 +91,7 @@ class OutlineBlock(BaseBlock):
 
     @property
     def size(self) -> pg.Vector2:
-        return pg.Vector2(UNIT * 1.25, UNIT * 1.25)  # unit*1.25
+        return pg.Vector2(UNIT * 1.25, UNIT * 1.25)
 
     @property
     def rect(self) -> pg.Rect:
@@ -106,9 +106,8 @@ class LogoBlock(BaseBlock):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         amp = UNIT * 0.4
-        freq = 1
         sine_time = time.time() - self.spawn_time
-        self.pos.y = self.og_pos.y + (amp * math.sin(freq * sine_time))
+        self.pos.y = self.og_pos.y + (amp * math.sin(sine_time))
         return None
 
     @property
