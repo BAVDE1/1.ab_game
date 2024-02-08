@@ -59,13 +59,13 @@ class PlatformBlock(BaseBlock):
 class GreyBlock(BaseBlock):
     @property
     def colour(self) -> pg.Color:
-        return COL_GREY
+        return Colours.COL_GREY
 
 
 class LightGreyBlock(BaseBlock):
     @property
     def colour(self) -> pg.Color:
-        return COL_LIGHT_GREY
+        return Colours.COL_LIGHT_GREY
 
 
 class OutlineBlock(BaseBlock):
@@ -87,7 +87,7 @@ class OutlineBlock(BaseBlock):
 
     @property
     def colour(self) -> pg.Color:
-        return COL_LIGHT_GREY
+        return Colours.COL_LIGHT_GREY
 
     @property
     def size(self) -> pg.Vector2:
@@ -106,7 +106,7 @@ class WaveBlock(OutlineBlock):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.og_pos.y = kwargs['y_pos'] - (UNIT / 2)
-        amp = UNIT * 0.2
+        amp = UNIT * 0.2  # max 0.62
         sine_time = time.time() - self.spawn_time
         self.pos.y = self.og_pos.y + (amp * math.sin(sine_time))
         return None

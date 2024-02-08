@@ -88,6 +88,21 @@ class Cover:
         canvas_screen.blit(self.cover_surface, self.pos)
 
 
+class Wave:
+    def __init__(self):
+        self.pos: pg.Vector2 = pg.Vector2()
+
+        self.wave_group: pg.sprite.Group = pg.sprite.Group()
+        self.wave_group.add(*[WaveBlock(pg.Vector2(x * UNIT, 0), x) for x in range(WIDTH)])
+
+    def update(self, cover):
+        self.wave_group.update(y_pos=cover.pos.y)
+
+    def draw(self, canvas_screen: pg.Surface, cover: Cover):
+        self.update(cover)
+        self.wave_group.draw(canvas_screen)
+
+
 class Logo:
     def __init__(self):
         self.pos: pg.Vector2 = pg.Vector2()
@@ -119,6 +134,7 @@ class Game:
     def __init__(self):
         self.logger = get_logger()
         self.save_handler = SaveHandler(self.logger)
+        update_colours(self.save_handler)
 
         self.running = True
         self.fps = 60
@@ -129,18 +145,20 @@ class Game:
         self.final_screen = pg.display.get_surface()
 
         self.current_level = ''
-        self.on_splash_screen = False
 
         self.logo: Logo = Logo()
         self.cover: Cover = Cover()
-        self.wave_group: pg.sprite.Group = pg.sprite.Group()
-        self.wave_group.add(*[WaveBlock(pg.Vector2(x * UNIT, 0), x) for x in range(WIDTH)])
+        self.wave: Wave = Wave()
 
         self.bg_group: pg.sprite.Group = pg.sprite.Group()
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
         self.level_group: pg.sprite.Group = pg.sprite.Group()
 
-        if self.save_handler.get_option('has_adjusted_brightness'):
+        if not self.save_handler.get_option('has_adjusted_brightness'):
+            self.game_status = GameStatus.ADJUST_BRIGHTNESS
+            self.load_adjust_brightness()
+        else:
+            self.game_status = GameStatus.SPLASH_SCREEN
             self.load_splash_screen()
 
     def events(self):
@@ -159,16 +177,16 @@ class Game:
         self.canvas_screen.fill(BG_COL)
 
         # RENDER HERE
-        self.bg_group.draw(self.canvas_screen)
-        self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
-        self.level_group.draw(self.canvas_screen)
+        if not self.game_status == GameStatus.ADJUST_BRIGHTNESS:
+            self.bg_group.draw(self.canvas_screen)
+            self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
+            self.level_group.draw(self.canvas_screen)
 
-        if self.on_splash_screen:
-            self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1])
-        self.cover.draw(self.canvas_screen)
-        self.wave_group.update(y_pos=self.cover.pos.y)
-        self.wave_group.draw(self.canvas_screen)
-        self.logo.draw(self.canvas_screen)
+            # if self.on_splash_screen:
+            #     self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1])
+            self.cover.draw(self.canvas_screen)
+            self.wave.draw(self.canvas_screen, self.cover)
+            self.logo.draw(self.canvas_screen)
 
         # FINAL RENDERING
         scaled = pg.transform.scale(self.canvas_screen, pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
@@ -190,6 +208,9 @@ class Game:
             if char in CHAR_TO_BLOCK:
                 sprite = CHAR_TO_BLOCK[char](get_pos_from_relative(pg.Vector2(x, y)))
                 self.static_surface.blit(sprite.image, sprite.rect)
+
+    def load_adjust_brightness(self):
+        pass
 
     def load_splash_screen(self):
         self.on_splash_screen = True

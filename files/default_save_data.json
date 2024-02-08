@@ -1,7 +1,8 @@
 {
     "options": {
         "has_adjusted_brightness": false,
-        "brightness": 5
+        "max_brightness": 20,
+        "brightness": 10
     },
     "save": {
 

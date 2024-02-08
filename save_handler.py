@@ -48,9 +48,18 @@ class SaveHandler:
     def get_option(self, option: str):
         with open(self.save_data_file, 'r') as fh:
             data = json.load(fh)
+            if 'max_' + option in data['options']:
+                max_value = data['options']['max_' + option]
+                return min(max_value, data['options'][option])
             return data['options'][option]
 
     def get_save(self, save_num: int):
         with open(self.save_data_file, 'r') as fh:
             data = json.load(fh)
             return data['save'][save_num]
+
+    def set_option(self, option: str, value):
+        pass
+
+    def set_save(self, save_num):
+        pass
