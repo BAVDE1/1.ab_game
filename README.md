@@ -1,3 +1,7 @@
+# REMASTER IN PROGRESS
+## IGNORE THIS DOCUMENT haha
+
+<br><br><br>
 NOTE: levels are free to be changed on your own fork, but take note to avoid touching the lobby, as the level selectors are hard coded.
 DO NOT remove OR add files to the 'levels' directory
 
@@ -9,9 +13,9 @@ Quit (only from menu) - esc, del
 
 
 Normal blocks:
-# = normal block
-* = fancy block
-- = platform (top half of a normal block, is the only thing that can stop a lift, other than another lift)
+#=normal block
+*=fancy block
+-=platform (top half of a normal block, is the only thing that can stop a lift, other than another lift)
 
 Details: (non-collide-able)
 g = random ground detail

@@ -1,10 +1,12 @@
 {
     "options": {
         "has_adjusted_brightness": false,
-        "max_brightness": 20,
         "brightness": 10
     },
     "save": {
 
+    },
+    "const": {
+        "max_brightness": 20
     }
 }

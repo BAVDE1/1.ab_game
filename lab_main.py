@@ -1,7 +1,8 @@
 import os.path
 import random
 import logging
-import datetime
+import time
+from datetime import datetime
 
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
 from constants import *
@@ -23,11 +24,11 @@ OUTLINE_CHARS = ['#', '*', '-']
 
 
 def get_logger():
-    log_file = f'{LOGGING_FOLDER}{datetime.datetime.now()}.log'
+    log_file = f'{LOGGING_FOLDER}{datetime.now().strftime("%Y-%m-%d (%H;%M.%S)")}.log'
     if not os.path.exists(LOGGING_FOLDER):
         os.makedirs(LOGGING_FOLDER)
     logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG,
-                        format='%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt='%m/%d/%Y %I:%M:%S')
+                        format='%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
     logging.debug('created logger successfully')
     return logging.getLogger(__name__)
 
