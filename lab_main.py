@@ -3,12 +3,14 @@ import random
 import logging
 import datetime
 
-from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
 from constants import *
 from save_handler import SaveHandler
 
 
-LOGGING_FOLDER = 'files/logs'
+LOGGING_FOLDER = 'files/logs/'
+LEVELS_FOLDER = 'files/levels/'
+
 CHAR_TO_BLOCK = {
     '#': BaseBlock,
     '*': FancyBlock,
@@ -21,7 +23,7 @@ OUTLINE_CHARS = ['#', '*', '-']
 
 
 def get_logger():
-    log_file = f'{LOGGING_FOLDER}/{datetime.datetime.now()}.log'
+    log_file = f'{LOGGING_FOLDER}{datetime.datetime.now()}.log'
     if not os.path.exists(LOGGING_FOLDER):
         os.makedirs(LOGGING_FOLDER)
     logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG,
@@ -31,7 +33,7 @@ def get_logger():
 
 
 def parse_level_file(level_name):
-    file_name = 'files/' + level_name.split('.')[0] + '.txt'
+    file_name = LEVELS_FOLDER + level_name.split('.')[0] + '.txt'
     if not os.path.isfile(file_name):
         raise FileNotFoundError(f'Cannot find file {file_name}')
 
@@ -53,12 +55,12 @@ def enumerate_function(lines: list[str]):
 
 class Cover:
     def __init__(self):
-        self.pos: pg.Vector2 = pg.Vector2(0, 0)
+        self.pos: pg.Vector2 = pg.Vector2(0, SCRN_HEIGHT / 2)
         self.cover_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.outline_group: pg.sprite.Group = pg.sprite.Group()
 
         # generates a bunch of random positions
-        self.bulge_positions = [pg.Vector2(random.randrange(0, SCRN_WIDTH), random.randrange(0, SCRN_HEIGHT)) for _ in range(3)]
+        self.bulge_positions = [pg.Vector2(random.randrange(0, SCRN_WIDTH), random.randrange(0, SCRN_HEIGHT)) for _ in range(4)]
 
     def add_outline_sprite(self, sprite: pg.sprite.Sprite):
         sprite.add(self.outline_group)
@@ -66,7 +68,7 @@ class Cover:
     def empty(self):
         self.outline_group.empty()
 
-    def update(self):
+    def update_outline(self):
         # update bulge positions first
         for index, pos in enumerate(self.bulge_positions):
             i = index + 2
@@ -76,7 +78,7 @@ class Cover:
         self.outline_group.update(bulge_positions=self.bulge_positions, cover_pos=self.pos)
 
     def draw(self, canvas_screen: pg.Surface):
-        self.update()
+        self.update_outline()
 
         self.cover_surface.fill(BG_COL)
         self.outline_group.draw(self.cover_surface)
@@ -131,6 +133,8 @@ class Game:
 
         self.logo: Logo = Logo()
         self.cover: Cover = Cover()
+        self.wave_group: pg.sprite.Group = pg.sprite.Group()
+        self.wave_group.add(*[WaveBlock(pg.Vector2(x * UNIT, 0), x) for x in range(WIDTH)])
 
         self.bg_group: pg.sprite.Group = pg.sprite.Group()
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
@@ -159,9 +163,11 @@ class Game:
         self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
         self.level_group.draw(self.canvas_screen)
 
-        if not self.on_splash_screen:
+        if self.on_splash_screen:
             self.cover.pos = pg.Vector2(0, pg.mouse.get_pos()[1])
         self.cover.draw(self.canvas_screen)
+        self.wave_group.update(y_pos=self.cover.pos.y)
+        self.wave_group.draw(self.canvas_screen)
         self.logo.draw(self.canvas_screen)
 
         # FINAL RENDERING

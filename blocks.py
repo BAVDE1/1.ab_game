@@ -76,7 +76,7 @@ class OutlineBlock(BaseBlock):
 
         if 'bulge_positions' in kwargs:
             bulge_positions = list(kwargs['bulge_positions'])
-            radius = UNIT * 0.13
+            radius = UNIT * 0.14
             half_unit = UNIT * 0.5
             for bulge_pos in bulge_positions:
                 bulge_pos = pg.Vector2(bulge_pos)
@@ -91,11 +91,32 @@ class OutlineBlock(BaseBlock):
 
     @property
     def size(self) -> pg.Vector2:
-        return pg.Vector2(UNIT * 1.25, UNIT * 1.25)
+        return pg.Vector2(UNIT * 1.3, UNIT * 1.3)
 
     @property
     def rect(self) -> pg.Rect:
         return pg.Rect(self.pos.x + ((UNIT - self.size.x) / 2), self.pos.y + ((UNIT - self.size.y) / 2), self.size.x, self.size.y)
+
+
+class WaveBlock(OutlineBlock):
+    def __init__(self, pos: pg.Vector2, x_index):
+        super().__init__(pos)
+        self._x = x_index
+        self.spawn_time = time.time() + x_index
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.og_pos.y = kwargs['y_pos'] - (UNIT / 2)
+        amp = UNIT * 0.2
+        sine_time = time.time() - self.spawn_time
+        self.pos.y = self.og_pos.y + (amp * math.sin(sine_time))
+        return None
+
+    @property
+    def colour(self) -> pg.Color:
+        return pg.Color(255, 255, 255)
+
+    def __repr__(self):
+        return f'WaveBlock({self.pos}, {self._x}, {len(self.groups())} group/s)'
 
 
 class LogoBlock(BaseBlock):
