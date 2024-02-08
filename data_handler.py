@@ -48,8 +48,7 @@ class SaveHandler:
     def get_option(self, option: str):
         with open(self.save_data_file, 'r') as fh:
             data = json.load(fh)
-            if 'max_' + option in data['const']:
-                max_value = data['const']['max_' + option]
+            if max_value := self.get_const('max_' + option):
                 return min(max_value, data['options'][option])
             return data['options'][option]
 
@@ -57,6 +56,14 @@ class SaveHandler:
         with open(self.save_data_file, 'r') as fh:
             data = json.load(fh)
             return data['save'][save_num]
+
+    def get_const(self, option: str):
+        """ Retrieves default data const """
+        with open(self.default_save_data_file, 'r') as default_fh:
+            const_data = json.load(default_fh)['const']
+            if option in const_data:
+                return const_data[option]
+            return False
 
     def set_option(self, option: str, value):
         pass

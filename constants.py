@@ -4,13 +4,14 @@ import math
 import time
 from pprint import pprint
 from typing import Any
-from save_handler import SaveHandler
+from data_handler import SaveHandler
 import pygame as pg
 
 VERSION = '1.0.0'
 
 
 class GameStatus:
+    INITIALISING = 0
     ADJUST_BRIGHTNESS = 1
     SPLASH_SCREEN = 2
     LOBBY = 3

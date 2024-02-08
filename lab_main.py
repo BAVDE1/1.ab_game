@@ -6,7 +6,7 @@ from datetime import datetime
 
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
 from constants import *
-from save_handler import SaveHandler
+from data_handler import SaveHandler
 
 
 LOGGING_FOLDER = 'files/logs/'
@@ -134,8 +134,8 @@ class Logo:
 class Game:
     def __init__(self):
         self.logger = get_logger()
-        self.save_handler = SaveHandler(self.logger)
-        update_colours(self.save_handler)
+        self.data_handler = SaveHandler(self.logger)
+        update_colours(self.data_handler)
 
         self.running = True
         self.fps = 60
@@ -155,11 +155,10 @@ class Game:
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
         self.level_group: pg.sprite.Group = pg.sprite.Group()
 
-        if not self.save_handler.get_option('has_adjusted_brightness'):
-            self.game_status = GameStatus.ADJUST_BRIGHTNESS
+        self.game_status = GameStatus.INITIALISING
+        if not self.data_handler.get_option('has_adjusted_brightness'):
             self.load_adjust_brightness()
         else:
-            self.game_status = GameStatus.SPLASH_SCREEN
             self.load_splash_screen()
 
     def events(self):
@@ -211,10 +210,10 @@ class Game:
                 self.static_surface.blit(sprite.image, sprite.rect)
 
     def load_adjust_brightness(self):
-        pass
+        self.game_status = GameStatus.ADJUST_BRIGHTNESS
 
     def load_splash_screen(self):
-        self.on_splash_screen = True
+        self.game_status = GameStatus.SPLASH_SCREEN
         self.logo.create_logo()
         self.load_level('lobby', side_load=True)
 

@@ -3,9 +3,7 @@
         "has_adjusted_brightness": false,
         "brightness": 10
     },
-    "save": {
-
-    },
+    "save": {},
     "const": {
         "max_brightness": 20
     }
