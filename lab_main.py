@@ -27,6 +27,9 @@ def get_logger():
     log_file = f'{LOGGING_FOLDER}{datetime.now().strftime("%Y-%m-%d (%H;%M.%S)")}.log'
     if not os.path.exists(LOGGING_FOLDER):
         os.makedirs(LOGGING_FOLDER)
+    files = os.listdir(LOGGING_FOLDER)
+    if len(files) > 10:
+        os.remove(f'{LOGGING_FOLDER}{files[0]}')
     logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG,
                         format='%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
     logging.debug('created logger successfully')

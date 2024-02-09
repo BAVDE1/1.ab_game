@@ -4,6 +4,9 @@ import os
 import logging
 
 
+IGNORE_DATA = ['const']
+
+
 class SaveHandler:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
@@ -22,21 +25,23 @@ class SaveHandler:
             default_data = json.load(default_data_file)
 
         for option in default_data:
-            if option not in current_data:
-                self.logger.warning(f"Option '{option}' not found in '{self.save_data_file}', adding.")
-                current_data[option] = default_data[option]
-                self.dump_data_into_save(current_data)
-
-            # inside option level
-            for sub_option in default_data[option]:
-                if sub_option not in current_data[option]:
-                    self.logger.warning(f"Sub-option '{sub_option}' not found in option '{option}' of '{self.save_data_file}', adding.")
-                    current_data[option][sub_option] = default_data[option][sub_option]
+            if option not in IGNORE_DATA:
+                if option not in current_data:
+                    self.logger.warning(f"Option '{option}' not found in '{self.save_data_file}', adding.")
+                    current_data[option] = default_data[option]
                     self.dump_data_into_save(current_data)
+
+                # inside option level
+                for sub_option in default_data[option]:
+                    if sub_option not in current_data[option]:
+                        self.logger.warning(f"Sub-option '{sub_option}' not found in option '{option}' of '{self.save_data_file}', adding.")
+                        current_data[option][sub_option] = default_data[option][sub_option]
+                        self.dump_data_into_save(current_data)
 
     def dump_data_into_save(self, data: dict):
         with open(self.save_data_file, 'r+') as fh:
             fh.truncate(0)
+            data.pop('const')
             json.dump(data, fh, indent=4)
 
     def create_save_file(self):
@@ -48,9 +53,12 @@ class SaveHandler:
     def get_option(self, option: str):
         with open(self.save_data_file, 'r') as fh:
             data = json.load(fh)
+            val = data['options'][option]
             if max_value := self.get_const('max_' + option):
-                return min(max_value, data['options'][option])
-            return data['options'][option]
+                val = min(max_value, val)
+            if min_value := self.get_const('min_' + option):
+                val = max(min_value, val)
+            return val
 
     def get_save(self, save_num: int):
         with open(self.save_data_file, 'r') as fh:

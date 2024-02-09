@@ -87,7 +87,7 @@ class OutlineBlock(BaseBlock):
 
     @property
     def colour(self) -> pg.Color:
-        return Colours.COL_LIGHT_GREY
+        return Colours.COL_GREY
 
     @property
     def size(self) -> pg.Vector2:

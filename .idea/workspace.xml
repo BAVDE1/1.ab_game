@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="fix log file creation">
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="const options">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blocks.py" beforeDir="false" afterPath="$PROJECT_DIR$/blocks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/files/default_save_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/files/default_save_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/save_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/save_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,7 +284,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707387699356</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="const options">
+      <option name="closed" value="true" />
+      <created>1707424102398</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1707424102398</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -323,6 +333,7 @@
     <MESSAGE value="bg blocks" />
     <MESSAGE value="cover &amp; outline" />
     <MESSAGE value="fix log file creation" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix log file creation" />
+    <MESSAGE value="const options" />
+    <option name="LAST_COMMIT_MESSAGE" value="const options" />
   </component>
 </project>
