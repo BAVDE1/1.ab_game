@@ -7,7 +7,7 @@ import logging
 IGNORE_DATA = ['const']
 
 
-class SaveHandler:
+class DataHandler:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
         self.default_save_data_file = 'files/default_save_data.json'

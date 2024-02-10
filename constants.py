@@ -4,7 +4,7 @@ import math
 import time
 from pprint import pprint
 from typing import Any
-from data_handler import SaveHandler
+from data_handler import DataHandler
 import pygame as pg
 
 VERSION = '1.0.0'
@@ -18,6 +18,8 @@ class GameStatus:
 
 
 class Colours:
+    BG_COL = pg.Color(0, 5, 5)
+
     COL_GREY = pg.Color(2, 4, 2)
     BASE_COL_GREY = pg.Color(COL_GREY)
 
@@ -25,15 +27,13 @@ class Colours:
     BASE_COL_LIGHT_GREY = pg.Color(COL_LIGHT_GREY)
 
 
-def update_colours(save_handler: SaveHandler):
-    brightness = save_handler.get_option('brightness')
+def update_colours(data_handler: DataHandler):
+    brightness = data_handler.get_option('brightness')
     col = pg.Color(brightness, brightness, brightness, 0)
 
     Colours.COL_GREY = Colours.BASE_COL_GREY + col
     Colours.COL_LIGHT_GREY = Colours.BASE_COL_LIGHT_GREY + col
 
-
-BG_COL = pg.Color(0, 5, 5)
 
 UNIT = 18
 WIDTH = 31

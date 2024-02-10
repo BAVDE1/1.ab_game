@@ -6,7 +6,7 @@ from datetime import datetime
 
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
 from constants import *
-from data_handler import SaveHandler
+from data_handler import DataHandler
 
 
 LOGGING_FOLDER = 'files/logs/'
@@ -84,7 +84,7 @@ class Cover:
     def draw(self, canvas_screen: pg.Surface):
         self.update_outline()
 
-        self.cover_surface.fill(BG_COL)
+        self.cover_surface.fill(Colours.BG_COL)
         self.outline_group.draw(self.cover_surface)
         # for pos in self.bulge_positions:
         #     pg.draw.rect(self.cover_surface, (255, 0, 0), pg.Rect(pos.x - self.pos.x, pos.y - self.pos.y, 5, 5))
@@ -95,9 +95,7 @@ class Cover:
 class Wave:
     def __init__(self):
         self.pos: pg.Vector2 = pg.Vector2()
-
-        self.wave_group: pg.sprite.Group = pg.sprite.Group()
-        self.wave_group.add(*[WaveBlock(pg.Vector2(x * UNIT, 0), x) for x in range(WIDTH)])
+        self.wave_group: pg.sprite.Group = pg.sprite.Group(*[WaveBlock(pg.Vector2(x * UNIT, 0), x) for x in range(WIDTH)])  # generates necessary sprites
 
     def update(self, cover):
         self.wave_group.update(y_pos=cover.pos.y)
@@ -136,28 +134,27 @@ class Logo:
 
 class Game:
     def __init__(self):
-        self.logger = get_logger()
-        self.data_handler = SaveHandler(self.logger)
-        update_colours(self.data_handler)
-
         self.running = True
         self.fps = 60
         self.clock = pg.time.Clock()
         self.keys = pg.key.get_pressed()
 
+        self.logger = get_logger()
+        self.data_handler = DataHandler(self.logger)
+        update_colours(self.data_handler)
+
         self.canvas_screen = pg.surface.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT))
         self.final_screen = pg.display.get_surface()
-
-        self.current_level = ''
-
-        self.logo: Logo = Logo()
-        self.cover: Cover = Cover()
-        self.wave: Wave = Wave()
 
         self.bg_group: pg.sprite.Group = pg.sprite.Group()
         self.static_surface: pg.Surface = pg.Surface(pg.Vector2(SCRN_WIDTH, SCRN_HEIGHT), pg.SRCALPHA)
         self.level_group: pg.sprite.Group = pg.sprite.Group()
 
+        self.logo: Logo = Logo()
+        self.cover: Cover = Cover()
+        self.wave: Wave = Wave()
+
+        self.current_level = ''
         self.game_status = GameStatus.INITIALISING
         if not self.data_handler.get_option('has_adjusted_brightness'):
             self.load_adjust_brightness()
@@ -176,8 +173,8 @@ class Game:
                 self.running = False
 
     def render(self):
-        self.final_screen.fill(BG_COL)
-        self.canvas_screen.fill(BG_COL)
+        self.final_screen.fill(Colours.BG_COL)
+        self.canvas_screen.fill(Colours.BG_COL)
 
         # RENDER HERE
         if not self.game_status == GameStatus.ADJUST_BRIGHTNESS:
