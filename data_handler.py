@@ -20,7 +20,11 @@ class DataHandler:
 
     def check_and_patch_integrity(self):
         with open(self.save_data_file, 'r') as fh:
-            current_data = json.load(fh)
+            fh_data = fh.read()
+            if not len(fh_data):
+                self.create_save_file()
+                return
+            current_data = json.loads(fh_data)
         with open(self.default_save_data_file, 'r') as default_data_file:
             default_data = json.load(default_data_file)
 
@@ -41,7 +45,8 @@ class DataHandler:
     def dump_data_into_save(self, data: dict):
         with open(self.save_data_file, 'r+') as fh:
             fh.truncate(0)
-            data.pop('const')
+            if 'const' in data:
+                data.pop('const')
             json.dump(data, fh, indent=4)
 
     def create_save_file(self):
@@ -74,7 +79,17 @@ class DataHandler:
             return False
 
     def set_option(self, option: str, value):
-        pass
+        with open(self.save_data_file, 'r') as fh:
+            data = json.load(fh)
+
+        if max_value := self.get_const('max_' + option):
+            value = min(max_value, value)
+        if min_value := self.get_const('min_' + option):
+            value = max(min_value, value)
+        data['options'][option] = value
+        self.logger.info(f"setting option '{option}' to '{value}'")
+        self.dump_data_into_save(data)
+        return True
 
     def set_save(self, save_num):
         pass

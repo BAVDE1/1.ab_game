@@ -132,6 +132,32 @@ class Logo:
         self.group.draw(canvas_screen)
 
 
+class AdjustBrightness:
+    def __init__(self, data_handler: DataHandler):
+        self.data_handler = data_handler
+
+        self.up_keys = [pg.K_RIGHT, pg.K_d, pg.K_UP, pg.K_w]
+        self.down_keys = [pg.K_LEFT, pg.K_a, pg.K_DOWN, pg.K_s]
+
+        self.brightness_val = self.data_handler.get_option('brightness')
+        self.max_val = self.data_handler.get_const('max_brightness')
+        self.min_val = self.data_handler.get_const('min_brightness')
+
+    def event(self, event):
+        val = self.brightness_val
+        if event.key in self.up_keys:
+            val += 1
+        elif event.key in self.down_keys:
+            val -= 1
+        if val != self.brightness_val:
+            self.data_handler.set_option('brightness', val)
+            self.brightness_val = self.data_handler.get_option('brightness')
+            update_colours(self.data_handler)
+
+    def draw(self, canvas_screen):
+        pass
+
+
 class Game:
     def __init__(self):
         self.running = True
@@ -153,6 +179,7 @@ class Game:
         self.logo: Logo = Logo()
         self.cover: Cover = Cover()
         self.wave: Wave = Wave()
+        self.adjust_brightness: AdjustBrightness = AdjustBrightness(self.data_handler)
 
         self.current_level = ''
         self.game_status = GameStatus.INITIALISING
@@ -163,8 +190,14 @@ class Game:
 
     def events(self):
         for event in pg.event.get():
-            # keydown input
-            if event.type in (pg.KEYDOWN, pg.KEYUP):
+            # key input
+            if event.type == pg.KEYDOWN:
+                self.keys = pg.key.get_pressed()
+
+                if self.game_status == GameStatus.ADJUST_BRIGHTNESS:
+                    self.adjust_brightness.event(event)
+
+            if event.type == pg.KEYUP:
                 self.keys = pg.key.get_pressed()
 
             # close game
@@ -177,7 +210,9 @@ class Game:
         self.canvas_screen.fill(Colours.BG_COL)
 
         # RENDER HERE
-        if not self.game_status == GameStatus.ADJUST_BRIGHTNESS:
+        if self.game_status == GameStatus.ADJUST_BRIGHTNESS:
+            self.adjust_brightness.draw(self.canvas_screen)
+        else:
             self.bg_group.draw(self.canvas_screen)
             self.canvas_screen.blit(self.static_surface, pg.Vector2(0, 0))
             self.level_group.draw(self.canvas_screen)
@@ -215,7 +250,7 @@ class Game:
     def load_splash_screen(self):
         self.game_status = GameStatus.SPLASH_SCREEN
         self.logo.create_logo()
-        self.load_level('lobby', side_load=True)
+        self.load_level('lobby')
 
     def clear_current_level(self):
         self.current_level = ''

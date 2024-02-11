@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="min const values, cap logs">
+    <list default="true" id="e828229d-7a43-4ce0-b081-3c7f56dfbc36" name="Changes" comment="cleaning">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_main.py" afterDir="false" />
     </list>
@@ -299,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707513946059</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="cleaning">
+      <option name="closed" value="true" />
+      <created>1707528720703</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1707528720703</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -342,6 +349,7 @@
     <MESSAGE value="fix log file creation" />
     <MESSAGE value="const options" />
     <MESSAGE value="min const values, cap logs" />
-    <option name="LAST_COMMIT_MESSAGE" value="min const values, cap logs" />
+    <MESSAGE value="cleaning" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaning" />
   </component>
 </project>
