@@ -1,3 +1,4 @@
+# Do not delete unused imports
 import os
 import copy
 import math
@@ -35,9 +36,16 @@ def update_colours(data_handler: DataHandler):
     Colours.COL_LIGHT_GREY = Colours.BASE_COL_LIGHT_GREY + col
 
 
+LOGGING_FOLDER = 'files/logs/'
+LEVELS_FOLDER = 'files/levels/'
+
+
 UNIT = 18
 WIDTH = 31
 HEIGHT = 41
 SCRN_WIDTH = UNIT * WIDTH
 SCRN_HEIGHT = UNIT * HEIGHT
 MARGIN = UNIT
+
+EDITOR_SCRN_WIDTH = UNIT * WIDTH
+EDITOR_SCRN_HEIGHT = UNIT * HEIGHT

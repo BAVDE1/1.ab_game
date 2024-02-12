@@ -1,6 +1,4 @@
-import math
-import time
-
+import pygame as pg
 from constants import *
 
 
