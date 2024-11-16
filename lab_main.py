@@ -1,18 +1,9 @@
 import random
-from utility import *
+from constants import *
+
+from utility import get_pos_from_relative, get_logger, enumerate_function, parse_level_file, CHAR_TO_BLOCK, OUTLINE_CHARS
 from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
-from editor import editor
-
-
-OUTLINE_CHARS = ['#', '*', '-']
-CHAR_TO_BLOCK = {
-    '#': BaseBlock,
-    '*': FancyBlock,
-    '-': PlatformBlock,
-
-    ':': LightGreyBlock,
-    '.': GreyBlock,
-}
+from editor.editor import run_editor
 
 
 class Cover:
@@ -159,7 +150,7 @@ class Game:
                 if self.game_status == GameStatus.SPLASH_SCREEN and event.key == pg.K_e:
                     self.logger.info('closing main app')
                     self.running = False
-                    editor.run_editor(self.logger)
+                    run_editor(self.logger)
 
             if event.type == pg.KEYUP:
                 self.keys = pg.key.get_pressed()

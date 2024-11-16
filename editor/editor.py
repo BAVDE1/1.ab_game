@@ -1,7 +1,7 @@
 from constants import *
-from utility import *
-from lab_main import CHAR_TO_BLOCK
-from button import BTNOperation, Button, ButtonOutlined
+import logging
+from utility import parse_level_file, get_pos_from_relative, enumerate_function, CHAR_TO_BLOCK
+from editor.button import Button, ButtonOutlined, BTNOperation
 
 
 class Level:

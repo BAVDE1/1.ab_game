@@ -1,6 +1,18 @@
 from constants import *
 from datetime import datetime
+from blocks import BaseBlock, FancyBlock, PlatformBlock, GreyBlock, LightGreyBlock, OutlineBlock, LogoBlock, WaveBlock
 import logging
+
+
+OUTLINE_CHARS = ['#', '*', '-']
+CHAR_TO_BLOCK = {
+    '#': BaseBlock,
+    '*': FancyBlock,
+    '-': PlatformBlock,
+
+    ':': LightGreyBlock,
+    '.': GreyBlock,
+}
 
 
 def get_logger(log_name_override="%Y-%m-%d (%H;%M.%S)"):
